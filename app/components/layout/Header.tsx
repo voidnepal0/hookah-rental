@@ -15,8 +15,8 @@ const Header = () => {
   const { theme, toggleTheme } = useTheme();
   
   return (
-    <header className='flex font-poppins items-center max-w-[2000px] mx-auto justify-between p-3' style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
-      <div className='max-w-[1440px] px-4 mx-auto items-center flex justify-between w-full'>
+    <header className='flex fixed top-0 right-0 left-0 z-100 font-poppins items-center max-w-[2000px] mx-auto shadow-[0px_2px_25px_rgba(0,0,0,0.1)] justify-between py-3' style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+      <div className='max-w-[1440px] px-4 lg:px-8 mx-auto items-center flex justify-between w-full'>
       <div>
         <Link href="/">
         {theme === 'dark' ? (

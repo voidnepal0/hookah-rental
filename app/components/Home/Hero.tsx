@@ -5,39 +5,63 @@ import { HookahIcon } from "../icons/HookahIcon";
 
 export default function Hero() {
   return (
-    <section className="w-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="max-w-[1440px] mx-auto px-6 py-20">
-        <section className='max-w-[1440px] px-4 mx-auto py-8 md:py-16'>
-          <div className='flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-0'>
-            <div className='max-w-[600px] w-full lg:w-auto text-center lg:text-left'>
-              <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold font-bebas-neue leading-tight mb-4' style={{ color: 'var(--text-primary)' }}>
-                RENT IT.<br/>CATER IT.<br/>SMOKE IT.
-              </h1>
-              <p className='text-sm md:text-base mb-6 font-poppins max-w-[500px]' style={{ color: 'var(--text-secondary)' }}>
-                Whether it&apos;s a chill night at home or a full-on party with friends, we&apos;ve got the smoke covered from start to finish.
-              </p>
-              <div className='max-w-[250px] w-full mx-auto lg:mx-0'>
-                <button className='relative w-full bg-[#F5C400] text-black rounded-[100px] py-3 px-6 hover:bg-yellow-400 transition-colors duration-300 group'>
-                  <span className='mr-5 font-bebas-neue text-black text-lg'>RENT A HOOKAH</span>
-                  <HookahIcon className='absolute w-10 h-10 top-1/2 right-3 transform -translate-y-1/2 text-black group-hover:scale-110 transition-transform duration-300' />
-                </button>
-              </div>
+    <section className="w-full max-w-[2000px] lg:pt-0 pt-[55px] mx-auto overflow-hidden bg-(--bg-primary) text-(--text-primary)">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8 ">
+        <div className='flex flex-col sm:flex-row  items-center justify-between gap-8 lg:gap-12 pt-12 md:pt-16 lg:pt-20'>
+          {/* Left Content */}
+          <div className='flex-1 font-bebas-neue max-w-[700px] text-left z-10'>
+            <h1 className='text-5xl md:text-6xl lg:text-8xl font-bebas-neue leading-[0.95] mb-6 text-(--text-primary)'>
+              RENT IT. CATER IT.<br/>SMOKE IT.
+            </h1>
+            <p className='text-sm md:text-base lg:text-[29px] text-(--text-primary) mb-8 max-w-[510px] leading-relaxed'>
+              Whether it&apos;s a chill night at home or a full-on party with friends, we&apos;ve got the smoke covered from start to finish.
+            </p>
+            <button className='relative cursor-pointer bg-[#F5C400] text-black rounded-full py-3 pl-8 pr-16 hover:bg-[#FFD700] transition-all duration-300 group inline-flex items-center'>
+              <span className='font-bebas-neue text-lg md:text-xl tracking-wide'>RENT A HOOKAH</span>
+              <HookahIcon className='absolute w-8 h-8 md:w-10 md:h-10 top-1/2 right-4 transform -translate-y-1/2 text-black group-hover:scale-110 transition-transform duration-300' />
+            </button>
+          </div>
+
+          {/* Right Image Section */}
+          <div className='flex-1 xl:ml-30 lg:ml-10 max-w-[720px]  relative flex justify-center lg:justify-end items-center h-full'>
+            {/* Yellow Blob Background */}
+            <div className='absolute xl:-right-30 lg:-right-40 lg:top-20 w-[350px] h-[300px] md:w-[400px] md:h-[450px] lg:w-[850px] lg:h-[600px] '>
+            <Image
+              src="/frame.svg"
+              alt="Frame background"
+              width={550}
+              height={550}
+              className='w-full h-full object-contain'
+            />
             </div>
-            <div className='relative w-full lg:w-auto flex justify-center lg:justify-end mt-8 lg:mt-0'>
-              <div className='relative w-[300px] md:w-[400px] lg:w-[500px] h-[300px] md:h-[400px] lg:h-[500px]'>
-                <div className='absolute inset-0 flex items-center justify-center'>
-                  <Image src="/frame.svg" alt="frame" width={500} height={500} className='w-full h-full object-contain' />
-                </div>
-                <div className='absolute inset-0 flex items-center justify-center z-10'>
-                  <Image src="/girl.svg" alt="girl" width={400} height={400} className='w-full h-full object-contain' />
-                </div>
-                <div className='absolute top-8 md:top-12 lg:top-16 left-1/2 transform -translate-x-1/2 z-20'>
-                  <Image src="/smoke.svg" alt="smoke" width={150} height={150} className='w-[100px] md:w-[150px] lg:w-[200px] h-auto object-contain' />
-                </div>
+            
+            {/* Image Container */}
+            <div className=' w-[280px] md:w-[350px] lg:w-[420px] h-[350px] md:h-[500px] lg:h-[700px] z-10'>
+              {/* Girl Image */}
+              <div className='absolute   inset-0 flex items-end justify-center'>
+                <Image 
+                  src="/girl.svg" 
+                  alt="Person with hookah" 
+                  width={700} 
+                  height={700} 
+                  className='w-full h-full object-contain object-bottom'
+                  priority
+                />
+              </div>
+              
+              {/* Smoke Image */}
+              <div className='absolute xl:top-42 lg:top-45 md:top-35 xl:left-2 md:left-3 lg:-left-2 top-23   w-[100px] md:w-[130px] lg:w-[200px] xl:w-[220px] z-20'>
+                <Image 
+                  src="/smoke.svg" 
+                  alt="Smoke effect" 
+                  width={220} 
+                  height={150} 
+                  className='w-full h-auto object-contain'
+                />
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </section>
   );

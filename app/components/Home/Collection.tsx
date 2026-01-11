@@ -1,39 +1,44 @@
+
+"use client";
 import React from "react";
 import Image from "next/image";
 import { product } from "../constants/ProductConstant";
 import { Prodcut } from "@/app/types/prodcutTypes";
+import { useTheme } from "@/app/contexts/ThemeContext";
 
 const Collection = () => {
+  const { theme } = useTheme();
   return (
     <section
-      className="max-w-[2000px] lg:py-[160px] py-[80px] mx-auto"
+      className="relative  max-w-[2000px] lg:pt-[160px] pt-[80px] mx-auto"
       style={{
         backgroundColor: "var(--bg-secondary)",
         color: "var(--text-primary)",
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 relative">
+      <div className="max-w-[1440px] mx-auto px-4">
 
         {/* Header */}
         <header className="flex items-center justify-between w-full gap-4 mb-10">
           <div className="flex items-center gap-6">
-            <span className="bg-primary h-20 w-2"></span>
+            <span className="bg-primary h-15 w-3"></span>
             <h2 className="font-bebas-neue text-[48px] tracking-wider">
               Our Smoke Collection
             </h2>
           </div>
 
-          <button className="bg-primary text-black py-2 px-6 rounded-full hover:opacity-90 transition">
+          <button className="bg-primary max-w-[100px] cursor-pointer w-full text-black py-2 px-6 z-10 rounded-full hover:opacity-90 transition">
             See All
           </button>
 
-          <div className="absolute -top-16 right-0 pointer-events-none opacity-70">
-            <Image src="/smoke2.svg" alt="smoke" width={260} height={260} />
+          <div className="absolute lg:top-16 top-11 right-0 pointer-events-none ">
+            <Image src={theme === 'dark' ? '/smoke2.svg' : '/whitesmoke.svg'} alt="smoke" width={260} height={260} />
+           
           </div>
         </header>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[300px] gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4  h-[700px]  gap-4">
 
           {product.map((item: Prodcut) => (
             <div
@@ -48,13 +53,13 @@ const Collection = () => {
                   src={item.image}
                   alt={item.name}
                   fill
-                  className="object-cover rounded-[20px]"
+                  className={`${item.id === 1 ? 'object-cover' : 'object-cover'} rounded-[20px]`}
                   sizes="(max-width: 768px) 50vw, 25vw"
                 />
               </div>
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute inset-0 " />
 
               {/* Badge */}
               <div className="absolute top-4 left-4 z-10">
@@ -64,26 +69,24 @@ const Collection = () => {
               </div>
 
               {/* Content */}
-              <div className="mt-2">
-                <h3 className=" text-lg font-semibold leading-tight">
+              <div className="mt-1 font-poppins">
+                <h3 className=" text-[16px] font-medium leading-[24px]">
                   {item.name}
                 </h3>
 
-                <p className=" text-sm mt-1 line-clamp-2">
-                  {item.description}
-                </p>
+              
 
-                <div className="flex justify-between mt-4 text-sm">
+                <div className="flex justify-between">
                   <div>
-                    <p>Per Hour</p>
-                    <p className="font-semibold">
+                    <p className="text-[14px] ">Per Hour</p>
+                    <p className="text-[16px] font-semibold">
                       Rs {item.price[0].amount}
                     </p>
                   </div>
 
                   <div>
-                    <p>Per Day</p>
-                    <p className="font-semibold">
+                    <p className="text-[14px]">Per Day</p>
+                    <p className="text-[16px] font-semibold">
                       Rs {item.price[1]?.amount || item.price[0].amount}
                     </p>
                   </div>
