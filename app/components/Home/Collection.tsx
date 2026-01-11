@@ -16,7 +16,7 @@ const Collection = () => {
         color: "var(--text-primary)",
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-4">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
 
         {/* Header */}
         <header className="flex items-center justify-between w-full gap-4 mb-10">
@@ -32,7 +32,7 @@ const Collection = () => {
           </button>
 
           <div className="absolute lg:top-16 top-11 right-0 pointer-events-none ">
-            <Image src={theme === 'dark' ? '/smoke2.svg' : '/whitesmoke.svg'} alt="smoke" width={260} height={260} />
+            <Image src={theme === 'dark' ? '/smoke2.svg' : '/whitesmoke.svg'} alt="smoke" width={260} height={260} className="w-auto h-auto" />
            
           </div>
         </header>

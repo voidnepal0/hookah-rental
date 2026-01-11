@@ -1,0 +1,381 @@
+"use client";
+import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
+import { useTheme } from '@/app/contexts/ThemeContext';
+import { product } from '@/app/components/constants/ProductConstant';
+import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+const RentalsPage = () => {
+  const { theme } = useTheme();
+  const [sortBy, setSortBy] = useState<string>('recommended');
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1200]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  // Get unique categories from products
+  const categories = useMemo(() => {
+    const cats = new Set(product.map(p => p.category));
+    return Array.from(cats);
+  }, []);
+
+  // Get category counts
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    product.forEach(p => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, []);
+
+  // Toggle category filter
+  const toggleType = (type: string) => {
+    setSelectedTypes(prev => 
+      prev.includes(type) 
+        ? prev.filter(t => t !== type)
+        : [...prev, type]
+    );
+    setCurrentPage(1);
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedTypes([]);
+    setPriceRange([0, 650]);
+    setCurrentPage(1);
+  };
+
+  // Filter and sort products
+  const filteredAndSortedProducts = useMemo(() => {
+    const filtered = product.filter(p => {
+      // Type filter
+      if (selectedTypes.length > 0 && !selectedTypes.includes(p.category)) {
+        return false;
+      }
+      
+      // Price filter
+      const price = p.price[0].amount;
+      if (price < priceRange[0] || price > priceRange[1]) {
+        return false;
+      }
+      
+      return true;
+    });
+
+    // Sort
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'price-asc':
+          return a.price[0].amount - b.price[0].amount;
+        case 'price-desc':
+          return b.price[0].amount - a.price[0].amount;
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        default: // recommended
+          return 0;
+      }
+    });
+
+    return sorted;
+  }, [selectedTypes, priceRange, sortBy]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredAndSortedProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredAndSortedProducts, currentPage]);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <section 
+      className="w-full min-h-screen lg:pt-[80px] pt-[55px]"
+      style={{
+        backgroundColor: "var(--bg-secondary)",
+        color: "var(--text-primary)",
+      }}
+    >
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 mb-6 font-poppins text-sm">
+          <Link href="/" className="opacity-60 hover:opacity-100 transition-opacity">
+            Home
+          </Link>
+          <ChevronRight size={16} className="opacity-60" />
+          <span className="font-medium">Rentals</span>
+        </nav>
+
+        <div className="flex flex-col  lg:flex-row gap-8">
+          {/* Sidebar Filters */}
+          <aside 
+            className="lg:w-78 border-r-2 border-(--border-color) shrink-0"
+            style={{
+              backgroundColor: "var(--bg-secondary)",
+            }}
+          >
+            <div className="sticky top-8 p-6  rounded-lg">
+              {/* Filters Header */}
+              <div className="flex items-center  justify-between  mb-6">
+                <h2 className="font-bebas-neue text-[24px] tracking-wider">
+                  Filters
+                </h2>
+                <button
+                  onClick={clearAllFilters}
+                  className="font-poppins cursor-pointer text-sm text-primary hover:underline"
+                >
+                  Clear All
+                </button>
+              </div>
+
+              {/* Types Filter */}
+              <div className="mb-8">
+                <h3 className="font-poppins font-semibold mb-4">Types</h3>
+                <div className="space-y-3">
+                  {categories.map(category => (
+                    <label 
+                      key={category}
+                      className="flex items-center gap-3 cursor-pointer group"
+                    >
+                      <div className="relative flex">
+                        <input
+                          type="checkbox"
+                          checked={selectedTypes.includes(category)}
+                          onChange={() => toggleType(category)}
+                          className="w-5 h-5 rounded border-2 border-gray-400 appearance-none checked:bg-primary checked:border-primary cursor-pointer transition-all"
+                        />
+                        {selectedTypes.includes(category) && (
+                          <svg
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-black pointer-events-none"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="3"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="font-poppins text-sm capitalize group-hover:text-primary transition-colors">
+                        {category} ({categoryCounts[category] || 0})
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range Filter */}
+              <div>
+                <h3 className="font-poppins font-semibold mb-4">Price Range</h3>
+                <div className="space-y-4">
+                  <input
+                    type="range"
+                    min="0"
+                    max="1200"
+                    value={priceRange[1]}
+                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                    className="w-full h-2 rounded-lg  cursor-pointer accent-primary"
+                    style={{
+                      background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${(priceRange[1] / 1200) * 100}%, #d1d5db ${(priceRange[1] / 1200) * 100}%, #d1d5db 100%)`
+                    }}
+                  />
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="font-poppins text-sm">Rs</span>
+                      <input
+                        type="number"
+                        value={priceRange[0]}
+                        onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                        className="w-20 px-2 py-1 border rounded font-poppins text-sm"
+                        style={{
+                          backgroundColor: "var(--bg-primary)",
+                          borderColor: "var(--border-color)",
+                        }}
+                      />
+                    </div>
+                    <span className="font-poppins text-sm">To</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-poppins text-sm">Rs</span>
+                      <input
+                        type="number"
+                        value={priceRange[1]}
+                        onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                        className="w-20 px-2 py-1 border rounded font-poppins text-sm"
+                        style={{
+                          backgroundColor: "var(--bg-primary)",
+                          borderColor: "var(--border-color)",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1">
+            {/* Header with Sort */}
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="font-bebas-neue text-[32px] tracking-wider">
+                Rental Collection
+              </h1>
+              
+              <div className="flex items-center gap-2">
+                <span className="font-poppins text-sm">Sort By:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 rounded-lg font-poppins text-sm cursor-pointer"
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                    color: "var(--text-primary)",
+                    border: "1px solid var(--border-color)",
+                  }}
+                >
+                  <option value="recommended">Recommended</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="name-asc">Name: A to Z</option>
+                  <option value="name-desc">Name: Z to A</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {paginatedProducts.map((prod) => (
+                <Link 
+                  key={prod.id}
+                  href={`/rentals/${prod.id}`}
+                  className="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-105"
+                  style={{
+                    backgroundColor: "var(--bg-secondary)",
+                  }}
+                >
+                  {/* Category Badge */}
+                  <div className="absolute top-4 left-4 z-20 bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
+                    {prod.category}
+                  </div>
+
+                  {/* Image Container */}
+                  <div className="relative h-80">
+                   
+                   
+
+                    {/* Product Image */}
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <Image
+                        src={prod.image}
+                        alt={prod.name}
+                        width={200}
+                        height={200}
+                        className="w-full h-full object-cover rounded-2xl"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4">
+                    <h3 className="font-bebas-neue text-[18px] uppercase tracking-wider mb-2 truncate">
+                      {prod.name}
+                    </h3>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="font-poppins text-sm opacity-70">
+                          Per {prod.price[0].duration}
+                        </span>
+                        <div className="font-bebas-neue text-[24px] text-primary">
+                          Rs {prod.price[0].amount}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer bg-(--bg-primary)  "
+                  style={{
+                   
+                  }}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => goToPage(pageNum)}
+                      className={`w-10 h-10 rounded-lg cursor-pointer font-poppins font-medium transition-colors ${
+                        currentPage === pageNum
+                          ? 'bg-primary text-black'
+                          : 'hover:bg-primary hover:text-black'
+                      }`}
+                      style={{
+                        
+                      }}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                {totalPages > 5 && currentPage < totalPages - 2 && (
+                  <>
+                    <span className="font-poppins">...</span>
+                    <button
+                      onClick={() => goToPage(totalPages)}
+                      className={`w-10 h-10 rounded-lg cursor-pointer font-poppins font-medium transition-colors bg-(--bg-primary) ${theme === 'dark' ? 'text-white' : 'text-black'}`}
+                      
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+
+                <button
+                  onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 cursor-pointer rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-(--bg-primary)"
+                  
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default RentalsPage;

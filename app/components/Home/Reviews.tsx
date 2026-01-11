@@ -1,0 +1,144 @@
+"use client"
+import React, { useState } from 'react'
+import { reviews } from '../constants/reviewConstants'
+import Image from 'next/image'
+import { useTheme } from '@/app/contexts/ThemeContext'
+import { QuoteIcon } from '../icons/QuoteIcon'
+const Reviews = () => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | null>(null)
+const { theme } = useTheme();
+  const nextReview = () => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setAnimationDirection('right')
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length)
+      setIsAnimating(false)
+      setAnimationDirection(null)
+    }, 1000)
+  }
+
+  const prevReview = () => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setAnimationDirection('left')
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length)
+      setIsAnimating(false)
+      setAnimationDirection(null)
+    }, 1000)
+  }
+
+  const currentReview = reviews[currentIndex]
+  const nextReviewData = reviews[(currentIndex + 1) % reviews.length]
+
+  return (
+   <section className='relative min-h-screen max-w-[2000px] overflow-hidden pb-10 lg:pb-0 lg:pt-[160px] pt-[80px] mx-auto bg-(--bg-secondary) text-(--text-primary)'>
+    <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+              <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+            </div>
+             <div className="absolute  bottom-0 left-0 pointer-events-none z-0">
+              <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+            </div>
+    <div className='max-w-[1440px] px-4 lg:px-8 mx-auto'>
+       <header className="mb-16 relative z-10">
+          <div className="flex items-center gap-6">
+            <span className="bg-primary h-15 w-3"></span>
+            <h2 className="font-bebas-neue text-[48px] tracking-wider">
+            The Streets Approved It.
+            </h2>
+          </div>
+          <p className="font-poppins text-[24px] font-medium">
+            Real feedback from people who know what a smooth session feels like.
+          </p>
+        </header>
+        
+        <div className='flex items-center justify-center relative h-[400px]'>
+          {/* Next Review Card (behind, slightly offset) */}
+          <div 
+            className={`absolute w-full max-w-[820px] bg-(--bg-primary) z-1 rounded-2xl shadow-2xl p-8 transition-all duration-500 ease-out ${
+              isAnimating && animationDirection === 'right' ? 'skew-animation-right' : 
+              isAnimating && animationDirection === 'left' ? 'skew-animation-left' : ''
+            }`}
+            style={{ zIndex: 1, height: '292px' }}
+          >
+            <div className="flex flex-col   h-full justify-center">
+              <div className="mb-2">
+               <QuoteIcon className='w-20 h-20  text-primary' />
+              </div>
+              <h3 className="font-bebas-neue text-primary text-[28px] mb-4">{nextReviewData.quote}</h3>
+              <p className="font-poppins text-[14px] mb-4 italic line-clamp-2">
+                &ldquo;{nextReviewData.comment}&rdquo;
+              </p>
+              <p className="font-poppins font-semibold text-[16px]">{nextReviewData.name}</p>
+            </div>
+          </div>
+
+          {/* Current Review Card (on top, centered) */}
+          <div 
+            className={`absolute w-full max-w-3xl bg-(--bg-primary) z-10 rounded-2xl shadow-2xl p-6 transition-all duration-500 ease-out ${
+              isAnimating ? '' : 'opacity-100 transform translate-y-0 scale-100'
+            }`}
+            style={{ zIndex: 2, height: '340px' }}
+          >
+            <div className="flex flex-col  t h-full justify-center">
+               <div className="">
+               <QuoteIcon className='w-20 h-20 text-primary' />
+              </div>
+              <h3 className="font-bebas-neue text-primary text-[28px] mb-2">{currentReview.quote}</h3>
+              <p className="font-poppins text-[14px] mb-4 leading-[160%]">
+                {currentReview.comment}
+              </p>
+              <p className="font-poppins font-semibold text-[16px]">{currentReview.name}</p>
+            </div>
+          </div>
+
+          {/* Navigation Buttons */}
+          <button
+            onClick={prevReview}
+            className="hidden lg:block absolute xl:left-50 lg:left-10  z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
+            style={{ transform: 'translateX(-50%)' }}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <button
+            onClick={nextReview}
+            className="hidden lg:block absolute xl:right-50 lg:right-10 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
+            style={{ transform: 'translateX(50%)' }}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <button
+            onClick={prevReview}
+            className="block lg:hidden absolute bottom-0  -translate-x-1/2 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
+            style={{ transform: 'translateX(-50%)' }}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <button
+            onClick={nextReview}
+            className="block lg:hidden absolute  bottom-0 translate-x-1/2 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
+            style={{ transform: 'translateX(50%)' }}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+    </div>
+   </section>
+  )
+}
+
+export default Reviews

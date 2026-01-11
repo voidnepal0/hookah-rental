@@ -17,11 +17,11 @@ const HowItWorks = () => {
         color: "var(--text-primary)",
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-4">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         
         {/* Smoke frames at top left */}
         <div className="absolute sm:top-20 top-0  left-0 pointer-events-none z-0">
-          <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="" />
+          <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
         </div>
        
 
@@ -30,7 +30,7 @@ const HowItWorks = () => {
           <div className="flex  items-center gap-6">
             <span className="bg-primary h-15 w-3"></span>
             <h2 className="font-bebas-neue text-[48px] tracking-wider">
-              Our Smoke Collection
+              How it works
             </h2>
           </div>
           <p className="font-poppins text-[24px]  font-medium">
@@ -39,9 +39,9 @@ const HowItWorks = () => {
         </header>
 
         {/* Steps Grid */}
-        <div className="flex items-center justify-center  flex-wrap gap-8 mb-16">
+        <div className="flex items-center justify-center max-w-[1440px] mx-auto  flex-wrap gap-8 mb-16">
           {steps.map((step, index) => (
-            <div key={index} className=" bg-(--bg-primary) h-[300px] z-10 max-w-[328px] py-3 px-5 rounded-[24px]   group">
+            <div key={index} className=" bg-(--bg-primary) h-[300px] z-10 max-w-[320px] py-3 px-5 rounded-[24px]   group">
               <div className="flex  items-center justify-between">
                  {/* Icon */}
               <div className="w-16 h-16  mb-6 flex items-center justify-center border-2 bg-primary rounded-full border-none transition-colors">

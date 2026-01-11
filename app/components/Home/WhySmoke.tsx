@@ -17,7 +17,7 @@ const WhySmoke = () => {
         color: "var(--text-primary)",
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-4">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         
        
        
@@ -34,36 +34,34 @@ const WhySmoke = () => {
         </header>
 
         {/* Steps Grid */}
-        <div className="flex items-center justify-center  flex-wrap gap-8 mb-16">
+        <div className="flex flex-wrap justify-center  lg:gap-16 gap-8 mb-16 max-w-[1440px] mx-auto">
           {whySmoke.map((step, index) => (
-            <div key={index} className="z-10  py-3 px-5 rounded-[24px]   group">
-              <div className="flex items-center justify-center">
+            <div key={index} className="z-10 py-6  rounded-[24px] group text-center shrink-0 w-[400px]">
+              <div className="flex items-center justify-center mb-6">
                  {/* Icon */}
-              <div className="w-16 h-16  mb-6 flex items-center justify-center border-2 bg-primary rounded-full border-none transition-colors">
-                <div className="text-black transition-colors">
-                  {step.icon}
+                <div className="w-16 h-16 flex items-center justify-center border-2 bg-primary rounded-full border-none transition-colors">
+                  <div className="text-black transition-colors">
+                    {step.icon}
+                  </div>
                 </div>
               </div>
               
-              
-             
-              </div>
               {/* Title */}
-              <h3 className="font-bebas-neue text-center uppercase text-[28px]  mb-3">
+              <h3 className="font-bebas-neue text-center uppercase text-[28px] mb-3">
                 {step.title}
               </h3>
               
               {/* Description */}
-              <p className="font-poppins max-w-[408px] text-center font-medium text-[16px] opacity-80 leading-relaxed">
+              <p className="font-poppins  text-center font-medium text-[16px] opacity-80 leading-relaxed">
                 {step.description}
               </p>
             </div>
           ))}
         </div>
 
-        {/* Hookah Icon at bottom right */}
+        
         <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-          <Image src={theme === 'dark' ? '/whySmokeBlack.svg' : '/whySmoke.svg'} alt="smoke" width={250} height={250} className="" />
+          <Image src={theme === 'dark' ? '/whySmokeBlack.svg' : '/whySmoke.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
         </div>
       </div>
     </section>
