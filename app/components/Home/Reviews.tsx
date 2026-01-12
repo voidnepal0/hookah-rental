@@ -35,34 +35,34 @@ const { theme } = useTheme();
   const nextReviewData = reviews[(currentIndex + 1) % reviews.length]
 
   return (
-   <section className='relative min-h-screen max-w-[2000px] overflow-hidden pb-10 lg:pb-0 lg:pt-[160px] pt-[80px] mx-auto bg-(--bg-secondary) text-(--text-primary)'>
+   <section className='relative lg:h-screen h-[85vh] max-w-[2000px] overflow-hidden pb-10 lg:pb-0 lg:pt-[160px] pt-[80px] mx-auto bg-(--bg-secondary) text-(--text-primary)'>
     <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
               <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
             </div>
-             <div className="absolute  bottom-0 left-0 pointer-events-none z-0">
-              <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+             <div className="absolute  -bottom-5 left-0 pointer-events-none z-0">
+              <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
             </div>
-    <div className='max-w-[1440px] px-4 lg:px-8 mx-auto'>
-       <header className="mb-16 relative z-10">
+    <div className='max-w-[1440px]  px-4 lg:px-8 mx-auto'>
+       <header className="mb-10  relative z-10">
           <div className="flex items-center gap-6">
-            <span className="bg-primary h-15 w-3"></span>
-            <h2 className="font-bebas-neue text-[48px] tracking-wider">
+            <span className="bg-primary h-10 lg:h-15 w-3"></span>
+            <h2 className="font-bebas-neue text-[28px] lg:text-[48px]">
             The Streets Approved It.
             </h2>
           </div>
-          <p className="font-poppins text-[24px] font-medium">
+          <p className="font-poppins lg:text-[24px] text-[18px] font-medium">
             Real feedback from people who know what a smooth session feels like.
           </p>
         </header>
         
-        <div className='flex items-center justify-center relative h-[400px]'>
+        <div className='flex items-center justify-center relative h-[350px]'>
           {/* Next Review Card (behind, slightly offset) */}
           <div 
-            className={`absolute w-full max-w-[820px] bg-(--bg-primary) z-1 rounded-2xl shadow-2xl p-8 transition-all duration-500 ease-out ${
+            className={`absolute w-full md:max-w-[820px] sm:max-w-xl max-w-sm  bg-(--bg-primary) z-1 rounded-2xl shadow-2xl p-8 transition-all duration-500 ease-out ${
               isAnimating && animationDirection === 'right' ? 'skew-animation-right' : 
               isAnimating && animationDirection === 'left' ? 'skew-animation-left' : ''
             }`}
-            style={{ zIndex: 1, height: '292px' }}
+           
           >
             <div className="flex flex-col   h-full justify-center">
               <div className="mb-2">
@@ -78,10 +78,10 @@ const { theme } = useTheme();
 
           {/* Current Review Card (on top, centered) */}
           <div 
-            className={`absolute w-full max-w-3xl bg-(--bg-primary) z-10 rounded-2xl shadow-2xl p-6 transition-all duration-500 ease-out ${
+            className={`absolute w-full  md:max-w-3xl sm:max-w-lg max-w-xs  bg-(--bg-primary) z-10 rounded-2xl shadow-2xl p-6  transition-all duration-500 ease-out ${
               isAnimating ? '' : 'opacity-100 transform translate-y-0 scale-100'
             }`}
-            style={{ zIndex: 2, height: '340px' }}
+            style={{ zIndex: 2, height: '380px' }}
           >
             <div className="flex flex-col  t h-full justify-center">
                <div className="">
@@ -118,7 +118,7 @@ const { theme } = useTheme();
 
           <button
             onClick={prevReview}
-            className="block lg:hidden absolute bottom-0  -translate-x-1/2 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
+            className="block lg:hidden absolute -bottom-20  -translate-x-1/2 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
             style={{ transform: 'translateX(-50%)' }}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ const { theme } = useTheme();
           
           <button
             onClick={nextReview}
-            className="block lg:hidden absolute  bottom-0 translate-x-1/2 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
+            className="block lg:hidden absolute  -bottom-20 translate-x-1/2 z-10 bg-primary text-black rounded-full p-3 hover:scale-110 transition-transform"
             style={{ transform: 'translateX(50%)' }}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

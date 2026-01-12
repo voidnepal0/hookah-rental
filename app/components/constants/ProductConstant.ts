@@ -114,5 +114,74 @@ export const product = [
         features: ['Multiple Hoses', 'Large Bowl', 'Party Pack'],
         materials: ['Stainless Steel', 'Wood', 'Borosilicate Glass']
     },
+    {
+        id: 6,
+        name: "Group Party",
+        description: "Large capacity hookah designed for group sessions and parties",
+        image: "/Hookah/hookah5.png",
+        price: [
+            {
+                amount: 800,
+                duration: 'hourly'
+            },
+            {
+                amount: 8000,
+                duration: 'daily'
+            }
+        ],
+        tag: 'party',
+        category: 'group',
+        inStock: true,
+        rating: 4.6,
+        reviews: 34,
+        features: ['Multiple Hoses', 'Large Bowl', 'Party Pack'],
+        materials: ['Stainless Steel', 'Wood', 'Borosilicate Glass']
+    },
+    {
+        id: 7,
+        name: "Group Party",
+        description: "Large capacity hookah designed for group sessions and parties",
+        image: "/Hookah/hookah5.png",
+        price: [
+            {
+                amount: 800,
+                duration: 'hourly'
+            },
+            {
+                amount: 8000,
+                duration: 'daily'
+            }
+        ],
+        tag: 'party',
+        category: 'group',
+        inStock: true,
+        rating: 4.6,
+        reviews: 34,
+        features: ['Multiple Hoses', 'Large Bowl', 'Party Pack'],
+        materials: ['Stainless Steel', 'Wood', 'Borosilicate Glass']
+    },
+    {
+        id: 8,
+        name: "Group Party",
+        description: "Large capacity hookah designed for group sessions and parties",
+        image: "/Hookah/hookah5.png",
+        price: [
+            {
+                amount: 800,
+                duration: 'hourly'
+            },
+            {
+                amount: 8000,
+                duration: 'daily'
+            }
+        ],
+        tag: 'party',
+        category: 'group',
+        inStock: true,
+        rating: 4.6,
+        reviews: 34,
+        features: ['Multiple Hoses', 'Large Bowl', 'Party Pack'],
+        materials: ['Stainless Steel', 'Wood', 'Borosilicate Glass']
+    },
    
 ]

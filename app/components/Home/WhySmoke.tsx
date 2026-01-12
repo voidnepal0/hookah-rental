@@ -17,16 +17,16 @@ const WhySmoke = () => {
         color: "var(--text-primary)",
       }}
     >
-      <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4  lg:px-8">
         
        
        
 
         {/* Header */}
-        <header className=" mb-16 relative z-10">
+        <header className=" mb-10 relative z-10">
           <div className="flex  items-center gap-6">
-            <span className="bg-primary h-15 w-3"></span>
-            <h2 className="font-bebas-neue text-[48px] tracking-wider">
+            <span className="bg-primary h-10 lg:h-15 w-3"></span>
+            <h2 className="font-bebas-neue text-[28px] lg:text-[48px] ">
               Why smoke with us
             </h2>
           </div>
@@ -34,9 +34,9 @@ const WhySmoke = () => {
         </header>
 
         {/* Steps Grid */}
-        <div className="flex flex-wrap justify-center  lg:gap-16 gap-8 mb-16 max-w-[1440px] mx-auto">
+        <div className="flex flex-wrap justify-center  xl:gap-22 gap-8 mb-16 max-w-[1440px] mx-auto">
           {whySmoke.map((step, index) => (
-            <div key={index} className="z-10 py-6  rounded-[24px] group text-center shrink-0 w-[400px]">
+            <div key={index} className="z-10 py-6  rounded-[24px] group text-center shrink-0 sm:w-[400px] w-full">
               <div className="flex items-center justify-center mb-6">
                  {/* Icon */}
                 <div className="w-16 h-16 flex items-center justify-center border-2 bg-primary rounded-full border-none transition-colors">

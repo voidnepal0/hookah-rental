@@ -1,6 +1,5 @@
 "use client"
 import React, { useState } from 'react'
-
 import { CartIcon } from '../icons/CartIcon'
 import { navConstant } from '../constants/navConstant'
 import Image from 'next/image'
@@ -10,30 +9,31 @@ import { MoonIcon } from '../icons/MoonIcon'
 import { MenuIcon, CloseIcon } from '../icons/MenuIcon'
 import { useTheme } from '../../contexts/ThemeContext'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import darkLogo from '@/public/logoDark.svg';
+import logo from '@/public/Logo.svg';
 
 const Header = () => {
-  const [active, setActive]= useState('Home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  
-  const handleNavClick = (itemName: string) => {
-    setActive(itemName);
-    setMobileMenuOpen(false);
-  };
-  
+  const pathname = usePathname();
+
+  // Check if we're on a product detail page (under /rentals/)
+  const isProductDetailPage = pathname.startsWith('/rentals/');
+
   return (
     <>
-      <header className='flex fixed top-0 left-0 right-0 z-100 font-poppins items-center w-full shadow-[0px_2px_25px_rgba(0,0,0,0.1)] justify-between py-3' style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+      <header className='flex max-w-[2000px] mx-auto fixed top-0 left-0 right-0 z-100 font-poppins items-center w-full shadow-[0px_2px_25px_rgba(0,0,0,0.1)] justify-between py-3' style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
         <div className='max-w-[1440px] px-4 lg:px-8 mx-auto items-center flex justify-between w-full'>
           {/* Mobile Menu Button */}
           <button 
-            className='lg:hidden cursor-pointer p-2 hover:scale-110 transition-transform'
+            className='lg:hidden cursor-pointer  hover:scale-110 transition-transform'
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
-              <CloseIcon className='w-6 h-6' />
+              <MenuIcon className='w-6 h-6 text-primary' />
             ) : (
-              <MenuIcon className='w-6 h-6' />
+              <MenuIcon className='w-8 h-8 text-primary' />
             )}
           </button>
 
@@ -41,9 +41,9 @@ const Header = () => {
           <div className='shrink-0'>
             <Link href="/">
               {theme === 'dark' ? (
-                <Image src="/Logo.svg" alt="Logo" width={100} height={100} className='w-auto h-auto' />
+                <Image src={logo} alt="Logo" width={100} height={100} className='w-auto h-auto' />
               ) : (
-                <Image src="/logoDark.svg" alt="Logo" width={100} height={100} className='w-auto h-auto' />
+                <Image src={darkLogo} alt="Logo" width={100} height={100} className='w-auto h-auto' />
               )}
             </Link>
           </div>
@@ -53,13 +53,12 @@ const Header = () => {
             {navConstant.map((item) => (
               <Link 
                 className={`relative after:content-[""] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-primary after:transition-all after:duration-300 ${
-                  active === item.name 
+                  (pathname === item.href || (isProductDetailPage && item.name === 'Rentals')) 
                     ? 'after:w-full text-primary' 
                     : 'after:w-0 hover:after:w-full hover:text-primary'
                 }`} 
                 key={item.name} 
                 href={item.href}
-                onClick={() => setActive(item.name)}
               >
                 {item.name}
               </Link>
@@ -111,14 +110,14 @@ const Header = () => {
       </header>
 
       {/* Mobile Sidebar Menu */}
-      <div className={`lg:hidden fixed w-full top-0 left-0 h-full bg-(--bg-secondary) text-(--text-primary)  shadow-xl transition-all duration-300 ease-in-out z-90 ${
+      <div className={`lg:hidden fixed w-full top-0 left-0 h-full bg-primary text-black z-100  shadow-xl transition-all duration-300 ease-in-out ${
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className='flex flex-col p-6 h-full'>
           {/* Close Button */}
           <div className='flex justify-end mb-8'>
             <button 
-              className='p-2 hover:scale-110 transition-transform'
+              className='p-2 cursor-pointer hover:scale-110 transition-transform'
               onClick={() => setMobileMenuOpen(false)}
             >
               <CloseIcon className='w-6 h-6' />
@@ -126,22 +125,38 @@ const Header = () => {
           </div>
 
           {/* Mobile Navigation */}
-          <nav className='flex flex-col font-medium leading-[160%] text-[18px] gap-6'>
+          <div className='flex flex-col justify-between w-full h-full'>
+          <nav className='flex flex-col font-medium leading-[160%] text-[18px] gap-4'>
             {navConstant.map((item) => (
               <Link 
-                className={`relative py-2 ${
-                  active === item.name 
-                    ? 'text-primary' 
-                    : 'hover:text-primary'
+                className={`relative py-2 block ${
+                  pathname === item.href 
+                    ? 'text-black' 
+                    : 'text-black hover:text-black'
                 }`} 
                 key={item.name} 
                 href={item.href}
-                onClick={() => handleNavClick(item.name)}
+                onClick={() => setMobileMenuOpen(false)}
               >
-                {item.name}
+                <span className={`relative ${pathname === item.href ? 'border-b-2 border-black' : ''}`}>
+                  {item.name}
+                </span>
               </Link>
             ))}
           </nav>
+             <div className="flex gap-2 justify-center items-center text-[14px]">
+            <p className='font-poppins text-[20px]'>Website by</p>
+            <Link href={'https://voidnepal.com.np/'} target="_blank" rel="noopener noreferrer">
+            <Image 
+              src={`/logoBlack.svg`} 
+              alt="Logo" 
+              width={50} 
+              height={50} 
+              className="w-auto h-5" 
+            />
+            </Link>
+          </div>
+          </div>
         </div>
       </div>
 

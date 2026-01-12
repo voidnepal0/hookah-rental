@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { HookahIcon } from "../icons/HookahIcon";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -17,10 +18,10 @@ export default function Hero() {
               Whether it&apos;s a chill night at home or a full-on party with friends, we&apos;ve got smoke covered from start to finish.
             </p>
             <div className='flex justify-center lg:justify-start'>
-              <button className='relative cursor-pointer bg-[#F5C400] text-black rounded-full py-3 pl-8 pr-16 hover:bg-[#FFD700] transition-all duration-300 group'>
+              <Link href={'/rentals'} className='relative cursor-pointer bg-[#F5C400] text-black rounded-full py-3 pl-8 pr-16 hover:bg-[#FFD700] transition-all duration-300 group'>
                 <span className='font-bebas-neue text-lg md:text-xl tracking-wide'>RENT A HOOKAH</span>
                 <HookahIcon className='absolute w-8 h-8 md:w-10 md:h-10 top-1/2 right-4 transform -translate-y-1/2 text-black group-hover:scale-110 transition-transform duration-300' />
-              </button>
+              </Link>
             </div>
           </div>
 

@@ -4,32 +4,32 @@ import { FacebookIcon, InstagramIcon, TwitterIcon, YoutubeIcon, TelegramIcon,Tik
 export const socialLinks = [
     {
         name: 'Facebook',
-        icon: <FacebookIcon />,
+        icon: <FacebookIcon className="w-6 h-6" />,
         href: '#'
     },
      {
         name: 'YouTube',
-        icon: <YoutubeIcon />,
+        icon: <YoutubeIcon className="w-6 h-6"  />,
         href: '#'
     },
     {
         name: 'Instagram',
-        icon: <InstagramIcon />,
+        icon: <InstagramIcon  className="w-6 h-6"/>,
         href: '#'
     },
       {
         name: 'Tiktok',
-        icon: <TiktokIcon />,
+        icon: <TiktokIcon className="w-6 h-6" />,
         href: '#'   
     },
     {
         name: 'Twitter',
-        icon: <TwitterIcon />,
+        icon: <TwitterIcon className="w-6 h-6" />,
         href: '#'   
     },
     {
         name: 'Telegram',
-        icon: <TelegramIcon />,
+        icon: <TelegramIcon className="w-6 h-6" />,
         href: '#'   
     }
   

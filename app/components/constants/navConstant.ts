@@ -1,7 +1,7 @@
 export const navConstant = [
   { name: 'Home', href: '/' },
-  { name: 'About Us', href: '#' },
+  { name: 'About Us', href: '/about-us' },
   { name: 'Rentals', href: '/rentals' },
-  { name: 'Book Catering', href: '#' },
-  { name: 'Contact Us', href: '#' },
+  { name: 'Catering', href: '/catering' },
+  { name: 'Contact Us', href: '/contact-us' },
 ]

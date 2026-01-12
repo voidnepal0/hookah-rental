@@ -5,6 +5,7 @@ import Image from "next/image";
 import { product } from "../constants/ProductConstant";
 import { Prodcut } from "@/app/types/prodcutTypes";
 import { useTheme } from "@/app/contexts/ThemeContext";
+import Link from "next/link";
 
 const Collection = () => {
   const { theme } = useTheme();
@@ -21,15 +22,15 @@ const Collection = () => {
         {/* Header */}
         <header className="flex items-center justify-between w-full gap-4 mb-10">
           <div className="flex items-center gap-6">
-            <span className="bg-primary h-15 w-3"></span>
-            <h2 className="font-bebas-neue text-[48px] tracking-wider">
+            <span className="bg-primary h-10 lg:h-15 w-3"></span>
+            <h2 className="font-bebas-neue text-[28px] lg:text-[48px] ">
               Our Smoke Collection
             </h2>
           </div>
 
-          <button className="bg-primary max-w-[100px] cursor-pointer w-full text-black py-2 px-6 z-10 rounded-full hover:opacity-90 transition">
+          <Link href={'/rentals'} className="bg-primary max-w-[100px] cursor-pointer w-full text-black py-2 px-6 z-10 rounded-full hover:opacity-90 transition">
             See All
-          </button>
+          </Link>
 
           <div className="absolute lg:top-16 top-11 right-0 pointer-events-none ">
             <Image src={theme === 'dark' ? '/smoke2.svg' : '/whitesmoke.svg'} alt="smoke" width={260} height={260} className="w-auto h-auto" />
@@ -40,10 +41,13 @@ const Collection = () => {
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4  h-[700px]  gap-4">
 
-          {product.map((item: Prodcut) => (
-            <div
+          {product.slice(0, 5).map((item: Prodcut) => {
+            const productName = item.name.toLowerCase().replace(/\s+/g, '-');
+            return (
+            <Link
               key={item.id}
-              className={`relative rounded-[20px] 
+              href={`/rentals/${productName}`}
+              className={`relative rounded-[20px] block  transition-transform duration-300
               ${item.id === 1 ? "col-span-2 row-span-2" : ""}`}
             >
               {/* Image */}
@@ -94,8 +98,9 @@ const Collection = () => {
                 </div>
               </div>
 
-            </div>
-          ))}
+            </Link>
+          );
+        })}
 
         </div>
       </div>
