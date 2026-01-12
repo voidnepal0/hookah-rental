@@ -30,7 +30,7 @@ const ContacatClient = () => {
             src="/contact/contact1.svg"
             alt="Contact us hero image"
             fill
-            className="object-cover rounded-2xl bg-black"
+            className="object-cover object-left lg:object-cover rounded-2xl bg-black"
           />
           <div className='absolute font-bebas-neue flex flex-col items-center justify-center inset-0'>
             <h1 className="lg:text-[72px] text-[40px] lg:text-6xl font-bold text-white">Get in Touch</h1>

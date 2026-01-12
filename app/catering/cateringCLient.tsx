@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { useTheme } from "@/app/contexts/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { PhoneIcon } from "../components/icons/PhoneIcon";
-import { MailIcon } from "../components/icons/MailIcon";
-import { HookahIcon } from "../components/icons/HookahIcon";
+import { PhoneIcon } from "../../components/icons/PhoneIcon";
+import { MailIcon } from "../../components/icons/MailIcon";
+import { HookahIcon } from "../../components/icons/HookahIcon";
 import Image from "next/image";
 
 const CateringClient = () => {

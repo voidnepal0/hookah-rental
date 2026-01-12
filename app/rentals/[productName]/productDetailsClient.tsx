@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { product } from '@/app/components/constants/ProductConstant';
+import { product } from '@/components/constants/ProductConstant';
 import Link from 'next/link';
 import { ChevronRight, ShoppingCart, ArrowLeft, ArrowRight } from 'lucide-react';
 
-import { useTheme } from '@/app/contexts/ThemeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const ProductDetailsClient = ({ productName }: { productName: string }) => {
   
@@ -81,7 +81,7 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
        <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
                     <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
                   </div>
-                   <div className="absolute  -bottom-5 left-0 pointer-events-none z-0">
+                   <div className="absolute  -bottom-10 left-0 pointer-events-none z-0">
                     <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
                   </div>
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8 py-8">
