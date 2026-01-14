@@ -151,7 +151,7 @@ const ContactForm = () => {
                     </div>
                     <div className="flex items-center gap-2">
                         <MailIcon className='w-5 h-5' />
-                        <p className="text-[16px]">baghbhairabbhs@gmail.com</p>
+                        <p className="text-[16px]">hookahrental@gmail.com</p>
                     </div>
                 </div>
               </div>
@@ -160,7 +160,7 @@ const ContactForm = () => {
                 <h3 className="font-bebas-neue text-[24px] ">ADDRESS</h3>
                 <div className= 'flex items-center gap-2'>
                   <AddressIcon className='w-5 h-5' />
-                  <p className="font-poppins text-[16px]">Kirtipur, Kathmandu</p>
+                  <p className="font-poppins text-[16px]">Kalanki, Kathmandu</p>
                 </div>
               </div>
 
