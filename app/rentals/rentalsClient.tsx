@@ -1,42 +1,53 @@
 "use client";
+
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useTheme } from '@/contexts/ThemeContext';
-import { product } from '@/components/constants/ProductConstant';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FilterIcon } from '../../components/icons/FilterIcon';
+import { useGetProducts } from '@/services';
+import { Product, ProductResponse } from '@/types/productTypes';
+import { API_URL } from '@/services/axiosInstance';
+interface RentalsClientProps {
+  initialProducts?: ProductResponse;
+}
 
-const RentalsPage = () => {
+const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
   const { theme } = useTheme();
   const [sortBy, setSortBy] = useState<string>('recommended');
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1200]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 650]);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const itemsPerPage = 8;
 
+  // Use initial data if provided, otherwise fetch from API
+  const apiProduct = useGetProducts();
+  const productData = initialProducts || apiProduct.data;
+
   // Get unique categories from products
   const categories = useMemo(() => {
-    const cats = new Set(product.map(p => p.category));
+    const cats = new Set((productData?.data as Product[])?.map((p) => p.shopProductCategory.name));
     return Array.from(cats);
-  }, []);
+  }, [productData?.data]);
 
   // Get category counts
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    product.forEach(p => {
-      counts[p.category] = (counts[p.category] || 0) + 1;
-    });
+    if (productData?.data) {
+      (productData?.data as Product[])?.forEach((p) => {
+        const categoryName = p.shopProductCategory.name;
+        counts[categoryName] = (counts[categoryName] || 0) + 1;
+      });
+    }
     return counts;
-  }, []);
+  }, [productData?.data]);
 
   // Toggle category filter
   const toggleType = (type: string) => {
-    setSelectedTypes(prev => 
-      prev.includes(type) 
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
     setCurrentPage(1);
   };
@@ -50,28 +61,28 @@ const RentalsPage = () => {
 
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
-    const filtered = product.filter(p => {
+    const filtered = (productData?.data as Product[])?.filter((p) => {
       // Type filter
-      if (selectedTypes.length > 0 && !selectedTypes.includes(p.category)) {
+      if (selectedTypes.length > 0 && !selectedTypes.includes(p.shopProductCategory.name)) {
         return false;
       }
-      
+
       // Price filter
-      const price = p.price[0].amount;
+      const price = p.variants && p.variants.length > 0 ? p.variants[0].sellingPrice as number : p.sellingPrice;
       if (price < priceRange[0] || price > priceRange[1]) {
         return false;
       }
-      
+
       return true;
     });
 
     // Sort
-    const sorted = [...filtered].sort((a, b) => {
+    const sorted = (filtered ? [...filtered] : []).sort((a, b) => {
       switch (sortBy) {
         case 'price-asc':
-          return a.price[0].amount - b.price[0].amount;
+          return (a.variants && a.variants.length > 0 ? a.variants[0].sellingPrice as number : a.sellingPrice) - (b.variants && b.variants.length > 0 ? b.variants[0].sellingPrice as number : b.sellingPrice);
         case 'price-desc':
-          return b.price[0].amount - a.price[0].amount;
+          return (b.variants && b.variants.length > 0 ? b.variants[0].sellingPrice as number : b.sellingPrice) - (a.variants && a.variants.length > 0 ? a.variants[0].sellingPrice as number : a.sellingPrice);
         case 'name-asc':
           return a.name.localeCompare(b.name);
         case 'name-desc':
@@ -82,7 +93,7 @@ const RentalsPage = () => {
     });
 
     return sorted;
-  }, [selectedTypes, priceRange, sortBy]);
+  }, [selectedTypes, priceRange, sortBy, productData?.data]);
 
   // Pagination
   const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
@@ -168,8 +179,8 @@ const RentalsPage = () => {
                         <div className="relative flex">
                           <input
                             type="checkbox"
-                            checked={selectedTypes.includes(category)}
-                            onChange={() => toggleType(category)}
+                            checked={selectedTypes.includes(category as string)}
+                            onChange={() => toggleType(category as string)}
                             className="w-5 h-5 rounded border-2 border-gray-400 appearance-none checked:bg-primary checked:border-primary cursor-pointer transition-all"
                           />
                           {selectedTypes.includes(category) && (
@@ -285,22 +296,19 @@ const RentalsPage = () => {
                   >
                     {/* Category Badge */}
                     <div className="absolute top-4 left-4 z-20 bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
-                      {prod.category}
+                      {prod.shopProductCategory.name}
                     </div>
 
                     {/* Image Container */}
                     <div className="relative h-80">
-                     
-                     
-
-                      {/* Product Image */}
                       <div className="absolute inset-0 flex items-center justify-center z-10">
                         <Image
-                          src={prod.image}
+                          src={API_URL ? `${API_URL}${prod.imageUrl}` : prod.imageUrl}
                           alt={prod.name}
                           width={200}
                           height={200}
                           className="w-full h-full object-cover rounded-2xl"
+                       
                         />
                       </div>
                     </div>
@@ -314,10 +322,10 @@ const RentalsPage = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <span className="font-poppins text-sm opacity-70">
-                            Per {prod.price[0].duration}
+                            Per hour
                           </span>
                           <div className=" text-[24px] text-primary">
-                            Rs {prod.price[0].amount}
+                            Rs {prod.variants && prod.variants.length > 0 ? (prod.variants[0].sellingPrice as number) : prod.sellingPrice}
                           </div>
                         </div>
                       </div>

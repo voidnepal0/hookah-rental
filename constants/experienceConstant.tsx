@@ -1,6 +1,6 @@
-import { GroupUserIcon } from "../icons/GroupUser";
-import { MeditationIcon } from "../icons/MeditationIcon";
-import { GlobeIcon } from "../icons/GlobeIcon";
+import { GroupUserIcon } from "../components/icons/GroupUser";
+import { MeditationIcon } from "../components/icons/MeditationIcon";
+import { GlobeIcon } from "../components/icons/GlobeIcon";
 
 
 export const experience = [{

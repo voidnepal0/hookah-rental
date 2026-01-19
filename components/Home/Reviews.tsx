@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import { reviews } from '../constants/reviewConstants'
+import { reviews } from '../../constants/reviewConstants'
 import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { QuoteIcon } from '../icons/QuoteIcon'

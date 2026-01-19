@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { CartIcon } from '../icons/CartIcon'
-import { navConstant } from '../constants/navConstant'
+import { navConstant } from '../../constants/navConstant'
 import Image from 'next/image'
 import {UserIcon} from '../icons/UserIcon'
 import { SunIcon } from '../icons/SunIcon'
@@ -41,9 +41,9 @@ const Header = () => {
           <div className='shrink-0'>
             <Link href="/">
               {theme === 'dark' ? (
-                <Image src={logo} alt="Logo" width={100} height={100} className='w-auto h-auto' />
+                <Image src={logo} alt="Logo" width={100} height={100} loading='eager' className='w-auto h-auto' />
               ) : (
-                <Image src={darkLogo} alt="Logo" width={100} height={100} className='w-auto h-auto' />
+                <Image src={darkLogo} alt="Logo" width={100} height={100} loading='eager' className='w-auto h-auto' />
               )}
             </Link>
           </div>

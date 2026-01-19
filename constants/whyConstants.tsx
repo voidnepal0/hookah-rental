@@ -1,8 +1,8 @@
-import { CleanIcon } from "../icons/CleanIcon";
-import { LeafIcon } from "../icons/LeafIcon";
-import { Clock2Icon } from "../icons/Clock2Icon";
-import { MoneyStackIcon } from "../icons/MoneyStackIcon";
-import { StarIcon } from "../icons/StarIcon";
+import { CleanIcon } from "../components/icons/CleanIcon";
+import { LeafIcon } from "../components/icons/LeafIcon";
+import { Clock2Icon } from "../components/icons/Clock2Icon";
+import { MoneyStackIcon } from "../components/icons/MoneyStackIcon";
+import { StarIcon } from "../components/icons/StarIcon";
 
  export const whySmoke = [
     {

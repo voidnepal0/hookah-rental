@@ -101,14 +101,15 @@ const CateringClient = () => {
                 <p className="text-[16px]">baghbhairabbhs@gmail.com</p>
               </div>
             </div>
-            <div>
+          
               <Image 
               src={theme === 'dark' ? '/contact/whiteHookah.svg' : '/contact/blackHookah.svg'}
               alt="Hookah"
               width={200}
               height={200}
+              
               />
-            </div>
+            
           </div>
 
           {/* Right Side - Form */}

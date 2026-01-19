@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 
 import { useTheme } from "@/contexts/ThemeContext";
-import { whySmoke } from "../constants/whyConstants";
+import { whySmoke } from "../../constants/whyConstants";
 const WhySmoke = () => {
   const { theme } = useTheme();
   

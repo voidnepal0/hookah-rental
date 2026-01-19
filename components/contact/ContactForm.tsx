@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
-import { socialLinks } from '../constants/footerConstants'
+import { socialLinks } from '../../constants/footerConstants'
 import { Send } from 'lucide-react'
 import { PhoneIcon } from '../icons/PhoneIcon'
 import { MailIcon } from '../icons/MailIcon'

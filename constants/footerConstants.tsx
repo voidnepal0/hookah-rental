@@ -1,4 +1,4 @@
-import { FacebookIcon, InstagramIcon, TwitterIcon, YoutubeIcon, TelegramIcon,TiktokIcon } from "../icons/SocialIcons";
+import { FacebookIcon, InstagramIcon, TwitterIcon, YoutubeIcon, TelegramIcon,TiktokIcon } from "../components/icons/SocialIcons";
 
 
 export const socialLinks = [

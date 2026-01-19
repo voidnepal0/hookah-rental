@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { WhoWeAre } from "../constants/aboutWhoConstant";
+import { WhoWeAre } from "../../constants/aboutWhoConstant";
 import Image from "next/image";
 import { useTheme } from "@/contexts/ThemeContext";
 const WhoAreWe = () => {

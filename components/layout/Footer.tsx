@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { useTheme } from "@/contexts/ThemeContext";
-import { socialLinks } from "../constants/footerConstants";
+import { socialLinks } from "../../constants/footerConstants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import darkLogo from '@/public/logoDark.svg';

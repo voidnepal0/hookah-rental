@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import { ThemeProvider } from "../contexts/ThemeContext";
+import QueryProvider from "../providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,9 +44,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${bebasNeue.variable} antialiased`}
       >
         <ThemeProvider>
-          <Header />
-          {children}
-          <Footer />
+          <QueryProvider>
+            <Header />
+            {children}
+            <Footer />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

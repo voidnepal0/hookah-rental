@@ -49,7 +49,7 @@ export const product = [
         id: 3,
         name: "Portable Mini",
         description: "Compact travel-friendly hookah perfect for outdoor sessions",
-        image: "/Hookah/hookah3.png",
+        image: "/Hookah/hookah4.png",
         price: [
             {
                 amount: 300,
@@ -72,7 +72,7 @@ export const product = [
         id: 4,
         name: "Luxury Gold",
         description: "Premium gold-plated hookah for special occasions and events",
-        image: "/Hookah/hookah4.png",
+        image: "/Hookah/hookah3.png",
         price: [
             {
                 amount: 1200,

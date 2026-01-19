@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { reviews } from "../constants/reviewConstants";
+import { reviews } from "../../constants/reviewConstants";
 import { QuoteIcon } from "../icons/QuoteIcon";
 import { ArrowRightIcon } from "../icons/ArrowRightIcon";
 import { ArrowLeftIcon } from "../icons/ArrowLeftIcon";

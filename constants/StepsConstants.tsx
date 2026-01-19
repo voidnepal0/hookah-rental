@@ -1,7 +1,7 @@
- import { HandIcon } from "../icons/HandIcon"
- import { ClockIcon } from "../icons/ClockIcon"
- import { VanIcon } from "../icons/VanIcon"
- import { WindIcon } from "../icons/WindIcon"
+ import { HandIcon } from "../components/icons/HandIcon"
+ import { ClockIcon } from "../components/icons/ClockIcon"
+ import { VanIcon } from "../components/icons/VanIcon"
+ import { WindIcon } from "../components/icons/WindIcon"
  
  export const steps = [
     {

@@ -1,37 +1,106 @@
+/* @react-compiler-disable */
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { product } from '@/components/constants/ProductConstant';
 import Link from 'next/link';
 import { ChevronRight, ShoppingCart, ArrowLeft, ArrowRight } from 'lucide-react';
-
 import { useTheme } from '@/contexts/ThemeContext';
+import { useGetProducts } from '@/services';
+import { Product } from '@/types/productTypes';
+import { API_URL } from '@/services/axiosInstance';
 
-const ProductDetailsClient = ({ productName }: { productName: string }) => {
-  
+interface ProductDetailsClientProps {
+  initialProduct: Product | null;
+}
 
-  const currentProduct = product.find(p => 
-    p.id.toString() === productName || 
-    (p.name && productName && (
-      p.name.toLowerCase() === productName.toLowerCase() ||
-      p.name.toLowerCase().replace(/\s+/g, '-') === productName.toLowerCase()
-    ))
-  );
-  
-  // Get recommended products (excluding current product, show all)
-  const recommendedProducts = product
-    .filter(p => p.id !== currentProduct?.id);
-
+const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => {
+  const { theme } = useTheme();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedDuration, setSelectedDuration] = useState<'hour' | 'day'>('hour');
-  const {theme} = useTheme();
+
+  // Use the initial product from server-side props
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(initialProduct);
+  
+  // Fallback client-side fetch if initialProduct is not available
+  useEffect(() => {
+    if (!currentProduct && typeof window !== 'undefined') {
+      const fetchProduct = async () => {
+        try {
+          const response = await fetch(`/api/products/${window.location.pathname.split('/').pop()}`);
+          if (response.ok) {
+            const product = await response.json();
+            setCurrentProduct(product);
+          }
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        }
+      };
+      
+      fetchProduct();
+    }
+  }, [currentProduct]);
+
+  // Fetch all products to find the matching one by name
+  const { data: allProducts } = useGetProducts(1, 100); 
+  
+  // Get recommended products (excluding current product)
+  const recommendedProducts = (() => {
+    if (!allProducts?.data || !currentProduct) return [];
+    return allProducts.data
+      .filter((prod: Product) => prod.id !== currentProduct.id)
+      .slice(0, 8);
+  })();
+
+  // Handle add to cart
+
+
+  // Create array of images (main image + secondary images)
+  const productImages = (() => {
+    if (!currentProduct) return [];
+    const images = [API_URL ? `${API_URL}${currentProduct.imageUrl}` : currentProduct.imageUrl];
+    if (currentProduct.secondaryImageUrls && currentProduct.secondaryImageUrls.length > 0) {
+      const secondaryImages = currentProduct.secondaryImageUrls.map(url => 
+        API_URL ? `${API_URL}${url}` : url
+      );
+      images.push(...secondaryImages);
+    }
+    // Fill remaining slots with placeholders if needed
+    while (images.length < 4) {
+      images.push('/placeholder.png');
+    }
+    return images.slice(0, 4); // Ensure max 4 images
+  })();
+
+  // Get pricing from variants or fallback to selling price
+  const getPrice = () => {
+    if (!currentProduct) return { hourly: 0, daily: 0 };
+    
+    if (currentProduct.variants && currentProduct.variants.length > 0) {
+      const variant = currentProduct.variants[0] as { sellingPrice?: number };
+      return {
+        hourly: variant.sellingPrice || 0,
+        daily: (variant.sellingPrice || 0) * 10 // Daily rate as 10x hourly
+      };
+    }
+    
+    return {
+      hourly: currentProduct.sellingPrice || 0,
+      daily: (currentProduct.sellingPrice || 0) * 10 // Daily rate as 10x hourly
+    };
+  };
+
+  const { hourly, daily } = getPrice();
+  
+  const totalPrice = selectedDuration === 'hour' 
+    ? hourly * quantity 
+    : daily * quantity;
+
   const productDisplayName = currentProduct?.name || 'Unknown Product';
 
   const scrollRecommendedLeft = () => {
     const container = document.getElementById('recommended-scroll-container');
     if (container) {
-      // Scroll by one product width + gap (260px + 16px gap = 276px for desktop, 220px + 16px = 236px for mobile)
       const scrollAmount = window.innerWidth >= 1024 ? 276 : 236;
       container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     }
@@ -40,13 +109,23 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
   const scrollRecommendedRight = () => {
     const container = document.getElementById('recommended-scroll-container');
     if (container) {
-      // Scroll by one product width + gap (260px + 16px gap = 276px for desktop, 220px + 16px = 236px for mobile)
       const scrollAmount = window.innerWidth >= 1024 ? 276 : 236;
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
 
   if (!currentProduct) {
+    return (
+      <div className="min-h-screen lg:pt-[160px] max-w-[2000px] mx-auto pt-[80px] flex items-center justify-center" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!allProducts?.data) {
     return (
       <div className="min-h-screen lg:pt-[160px] max-w-[2000px] mx-auto pt-[80px] flex items-center justify-center" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
         <div className="text-center">
@@ -59,22 +138,6 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
       </div>
     );
   }
-
-  // Create array of 4 images (main image + 3 placeholders)
-  const productImages = [
-    currentProduct.image,
-    '/placeholder.png',
-    '/placeholder.png',
-    '/placeholder.png'
-  ];
-
-  const hourlyPrice = currentProduct.price.find(p => p.duration === 'hourly');
-  const dailyPrice = currentProduct.price.find(p => p.duration === 'daily');
-  
-  
-  const totalPrice = selectedDuration === 'hour' 
-    ? (hourlyPrice?.amount || 0) * quantity 
-    : (dailyPrice?.amount || 0) * quantity;
 
   return (
     <div className=" relative max-w-[2000px] mx-auto lg:pt-[80px] pt-[50px]" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-primary)" }}>
@@ -116,6 +179,8 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
                     alt={`${productDisplayName} ${index + 1}`}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 1024px) 80px, 96px"
+                    priority
                   />
                 </button>
               ))}
@@ -123,18 +188,20 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
 
             {/* Main Image */}
             <div className="relative w-full lg:w-[400px] h-[400px] lg:h-[500px] rounded-2xl overflow-hidden order-1 lg:order-2" style={{ backgroundColor: "var(--bg-secondary)" }}>
-              {currentProduct.category && (
+              {currentProduct.shopProductCategory && (
                 <div className="absolute top-4 left-4 z-10">
                   <span className="bg-primary text-black px-3 py-1 rounded-full font-bold text-xs uppercase">
-                    {currentProduct.category}
+                    {currentProduct.shopProductCategory.name}
                   </span>
                 </div>
               )}
               <Image
-                src={productImages[currentImageIndex]}
+                src={productImages[currentImageIndex] || '/placeholder.png'}
                 alt={productDisplayName}
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 400px, 500px"
+                priority
               />
             </div>
           </div>
@@ -149,11 +216,11 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <div className="text-sm opacity-70">Per Hour</div>
-                  <span className="text-xl font-bold">Rs {totalPrice}</span>
+                  <span className="text-xl font-bold">Rs {hourly}</span>
                 </div>
                 <div className="text-right">
                   <div className="text-sm opacity-70">Per Day</div>
-                  <div className="text-lg font-bold">Rs {dailyPrice?.amount || 0}</div>
+                  <div className="text-lg font-bold">Rs {daily}</div>
                 </div>
               </div>
             </div>
@@ -163,6 +230,18 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
               <p className="leading-relaxed text-sm opacity-90">
                 {currentProduct.description}
               </p>
+              {currentProduct.brand && (
+                <div className="mt-2">
+                  <span className="text-xs opacity-70">Brand: </span>
+                  <span className="text-xs font-medium">{currentProduct.brand.name}</span>
+                </div>
+              )}
+              {currentProduct.sku && (
+                <div className="mt-1">
+                  <span className="text-xs opacity-70">SKU: </span>
+                  <span className="text-xs font-medium">{currentProduct.sku}</span>
+                </div>
+              )}
             </div>
 
             {/* Duration Selection */}
@@ -249,22 +328,21 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
           </div>
           <div id="recommended-scroll-container" className="overflow-x-auto scrollbar-hide">
             <div id="recommended-container" className="flex gap-4 pb-4" style={{ minWidth: 'max-content' }}>
-              {recommendedProducts.map((prod) => (
+              {recommendedProducts.map((prod: Product) => (
                 <Link 
                   key={prod.id}
                   href={`/rentals/${prod.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="group font-poppins relative overflow-hidden rounded-2xl lg:w-[260px] w-[220px]   transition-all duration-300 hover:scale-105 shrink-0"
-                 
+                  className="group font-poppins relative overflow-hidden rounded-2xl lg:w-[260px] w-[220px] transition-all duration-300 hover:scale-105 shrink-0"
                 >
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4 z-20 bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
-                    {prod.category}
+                    {prod.shopProductCategory.name}
                   </div>
 
                   {/* Image Container */}
                   <div className="h-[450px]">
                     <Image
-                      src={prod.image}
+                      src={API_URL ? `${API_URL}${prod.imageUrl}` : prod.imageUrl}
                       alt={prod.name}
                       width={200}
                       height={200}
@@ -273,18 +351,18 @@ const ProductDetailsClient = ({ productName }: { productName: string }) => {
                   </div>
 
                   {/* Content */}
-                  <div className="mt-1 ">
-                    <h3 className="text-[16px] uppercase tracking-wider  truncate">
+                  <div className="mt-1">
+                    <h3 className="text-[16px] uppercase tracking-wider truncate">
                       {prod.name}
                     </h3>
                     
                     <div className="flex items-center mt-1 justify-between">
                       <div>
-                        <span className="font-poppins  text-sm opacity-70">
-                          Per {prod.price[0].duration}
+                        <span className="font-poppins text-sm opacity-70">
+                          Per hour
                         </span>
-                        <div className="text-[20px] ">
-                          Rs {prod.price[0].amount}
+                        <div className="text-[20px]">
+                          Rs {prod.variants && prod.variants.length > 0 ? (prod.variants[0] as { sellingPrice?: number }).sellingPrice : prod.sellingPrice}
                         </div>
                       </div>
                     </div>

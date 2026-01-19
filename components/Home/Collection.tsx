@@ -2,8 +2,8 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { product } from "../constants/ProductConstant";
-import { Prodcut } from "@/types/prodcutTypes";
+import { product } from "../../constants/ProductConstant";
+
 import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
 
@@ -41,7 +41,7 @@ const Collection = () => {
         {/* Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4  h-[700px]  gap-4">
 
-          {product.slice(0, 5).map((item: Prodcut) => {
+          {product.slice(0, 5).map((item) => {
             const productName = item.name.toLowerCase().replace(/\s+/g, '-');
             return (
             <Link

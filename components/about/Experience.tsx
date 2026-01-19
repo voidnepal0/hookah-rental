@@ -1,5 +1,5 @@
 import React from 'react'
-import { experience } from '../constants/experienceConstant'
+import { experience } from '../../constants/experienceConstant'
 const Experience = () => {
   return (
     <section className='max-w-[2000px] mx-auto bg-(--bg-primary) lg:py-20 py-5  text-(--text-primary)'>

@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import {cateringCater} from '../constants/cateringConstants'
+import {cateringCater} from '../../constants/cateringConstants'
 const Catering = () => {
   return (
     <section className='max-w-[2000px] mx-auto bg-(--bg-primary) lg:py-20 py-5  text-(--text-primary)'>

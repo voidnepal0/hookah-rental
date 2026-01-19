@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 
 import { useTheme } from "@/contexts/ThemeContext";
-import { steps } from "../constants/StepsConstants";
+import { steps } from "../../constants/StepsConstants";
 const HowItWorks = () => {
   const { theme } = useTheme();
   
