@@ -59,13 +59,13 @@
 @keyframes skew-right {
   0% {
     transform: translateX(0%) translateY(0%) skewY(0deg);
-  width: 770px;
+  width: 650px;
    height: 380px;
    z-index: 0;
   }
   50% {
     transform: translateX(40%) translateY(-90%) skewY(30deg);
-    width: 770px;
+    width: 700px;
     height: 320px;
    z-index: 0;
   
@@ -81,13 +81,13 @@
 @keyframes skew-left {
   0% {
     transform: translateX(0%) translateY(0%) skewY(0deg);
-    width: 770px;
+    width: 650px;
     height: 380px;
     z-index: 0;
   }
   50% {
     transform: translateX(-40%) translateY(-90%) skewY(-30deg);
-    width: 770px;
+    width: 700px;
     height: 320px;
    z-index: 0;
    

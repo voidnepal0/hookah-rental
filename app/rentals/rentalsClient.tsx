@@ -289,25 +289,24 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
                   <Link 
                     key={prod.id}
                     href={`/rentals/${prod.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-105"
-                    style={{
-                      backgroundColor: "var(--bg-secondary)",
-                    }}
+                    className="group relative"
+                   
                   >
                     {/* Category Badge */}
-                    <div className="absolute top-4 left-4 z-20 bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
+                    <div className="absolute top-4 left-4 z-20  bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
                       {prod.shopProductCategory.name}
                     </div>
 
                     {/* Image Container */}
                     <div className="relative h-80">
-                      <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className="absolute h-full w-full inset-0 flex items-center   justify-center z-10">
+                        
                         <Image
                           src={API_URL ? `${API_URL}${prod.imageUrl}` : prod.imageUrl}
                           alt={prod.name}
                           width={200}
                           height={200}
-                          className="w-full h-full object-cover rounded-2xl"
+                          className={`w-full  h-full object-cover transition-all rounded-2xl  duration-300`}
                        
                         />
                       </div>

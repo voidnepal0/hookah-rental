@@ -44,7 +44,7 @@ const { theme } = useTheme();
               <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
             </div>
     <div className='max-w-[1440px]  px-4 lg:px-8 mx-auto'>
-       <header className="mb-10  relative ">
+       <header className="mb-10 lg:mb-0  relative ">
           <div className="flex items-center gap-6">
             <span className="bg-primary h-10 lg:h-15 w-3"></span>
             <h2 className="font-bebas-neue text-[28px] lg:text-[48px]">
@@ -56,7 +56,7 @@ const { theme } = useTheme();
           </p>
         </header>
         
-        <div className='flex items-center justify-center relative h-[600px]'>
+        <div className='flex items-center justify-center relative lg:h-[600px] h-[350px]'>
           {/* Next Review Card (behind, slightly offset) */}
           <div 
             className={`absolute w-full  md:max-w-[820px] sm:max-w-xl max-w-sm  bg-(--bg-primary) z-1 rounded-2xl shadow-2xl p-8 transition-all  ease-out ${
