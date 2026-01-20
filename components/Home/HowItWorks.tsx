@@ -11,7 +11,7 @@ const HowItWorks = () => {
 
   return (
     <section 
-      className="relative  max-w-[2000px] lg:pt-[160px] pt-[80px] pb-15 overflow-hidden  mx-auto"
+      className="relative  max-w-[2000px] lg:pt-[160px] pt-[80px] pb-25 overflow-hidden  mx-auto"
       style={{
         backgroundColor: "var(--bg-secondary)",
         color: "var(--text-primary)",
@@ -41,7 +41,7 @@ const HowItWorks = () => {
         {/* Steps Grid */}
         <div className="flex items-center justify-center max-w-[1440px] mx-auto flex-wrap gap-8 mb-16">
           {steps.map((step, index) => (
-            <div key={index} className=" bg-(--bg-primary) h-[300px] z-10 sm:w-[320px] w-full py-3 px-5 rounded-[24px]   group">
+            <div key={index} className=" bg-(--bg-primary) lg:h-[320px]  z-10 sm:w-[320px] w-full py-6 px-5 rounded-[24px]   group">
               <div className="flex  items-center justify-between">
                  {/* Icon */}
               <div className="w-16 h-16  mb-6 flex items-center justify-center border-2 bg-primary rounded-full border-none transition-colors">

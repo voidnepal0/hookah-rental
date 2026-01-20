@@ -34,7 +34,7 @@ const WhySmoke = () => {
         </header>
 
         {/* Steps Grid */}
-        <div className="flex flex-wrap justify-center  xl:gap-22 gap-8 mb-16 max-w-[1440px] mx-auto">
+        <div className="flex flex-wrap justify-center  xl:gap-x-22 gap-2 mb-16 max-w-[1440px] mx-auto">
           {whySmoke.map((step, index) => (
             <div key={index} className="z-10 py-6  rounded-[24px] group text-center shrink-0 sm:w-[400px] w-full">
               <div className="flex items-center justify-center mb-6">

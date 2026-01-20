@@ -41,7 +41,7 @@ const ClinetSay = () => {
         </header>
 
         {/* Slider */}
-        <div className="relative h-[350px] flex  items-center justify-center">
+        <div className="relative h-[350px] flex items-center justify-center">
           {reviews.map((review, index) => {
             const prev = getIndex(current - 1);
             const next = getIndex(current + 1);
@@ -103,24 +103,60 @@ const ClinetSay = () => {
             );
           })}
 
-          {/* Arrows */}
-          <button
-            onClick={() => setCurrent(getIndex(current + 1))}
-            className="absolute cursor-pointer left-6 z-30 bg-primary text-black rounded-full p-2 hover:scale-110 transition"
-          >
-            <ArrowLeftIcon className="w-10 h-10" />
-          </button>
+          {/* Arrows - Desktop */}
+          <div className="hidden md:block">
+            <button
+              onClick={() => setCurrent(getIndex(current - 1))}
+              className="absolute cursor-pointer left-6 top-1/2 -translate-y-1/2 z-30 bg-primary text-black rounded-full p-3 hover:scale-110 transition"
+              aria-label="Previous review"
+            >
+              <ArrowLeftIcon className="w-5 h-5" />
+            </button>
 
+            <button
+              onClick={() => setCurrent(getIndex(current + 1))}
+              className="absolute cursor-pointer right-6 top-1/2 -translate-y-1/2 z-30 bg-primary text-black rounded-full p-3 hover:scale-110 transition"
+              aria-label="Next review"
+            >
+              <ArrowRightIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden flex items-center justify-center gap-6 mt-15">
           <button
             onClick={() => setCurrent(getIndex(current - 1))}
-            className="absolute cursor-pointer right-6 z-30 bg-primary text-black rounded-full p-2 hover:scale-110 transition"
+            className="bg-primary cursor-pointer text-black rounded-full p-3 z-30 hover:scale-110 transition"
+            aria-label="Previous review"
           >
-           <ArrowRightIcon className="w-10 h-10" />
+            <ArrowLeftIcon className="w-5 h-5" />
+          </button>
+
+          {/* Dots */}
+          <div className="flex justify-center gap-2">
+          {reviews.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`h-2 rounded-full transition-all ${
+                i === current ? "bg-primary w-8" : "bg-gray-400 w-2"
+              }`}
+            />
+          ))}
+          </div>
+
+          <button
+            onClick={() => setCurrent(getIndex(current + 1))}
+            className="bg-primary cursor-pointer text-black rounded-full p-3 z-30 hover:scale-110 transition"
+            aria-label="Next review"
+          >
+            <ArrowRightIcon className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Dots */}
-        <div className="flex justify-center gap-2 mt-12">
+        {/* Desktop Dots */}
+        <div className="hidden md:flex justify-center gap-2 mt-12">
           {reviews.map((_, i) => (
             <button
               key={i}

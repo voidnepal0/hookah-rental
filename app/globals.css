@@ -59,30 +59,46 @@
 @keyframes skew-right {
   0% {
     transform: translateX(0%) translateY(0%) skewY(0deg);
-   z-index: 1;
+  width: 770px;
+   height: 380px;
+   z-index: 0;
   }
   50% {
-    transform: translateX(20%) translateY(-120%) skewY(20deg);
-z-index: 10;
+    transform: translateX(40%) translateY(-90%) skewY(30deg);
+    width: 770px;
+    height: 320px;
+   z-index: 0;
+  
   }
   100% {
     transform: translateX(0%) translateY(0%) skewY(0deg);
-  z-index: 100;
+    width: 770px;
+    height: 380px;
+   z-index: 40;
+  
   }
 }
 @keyframes skew-left {
   0% {
     transform: translateX(0%) translateY(0%) skewY(0deg);
-    z-index: 1;
+    width: 770px;
+    height: 380px;
+    z-index: 0;
   }
   50% {
-    transform: translateX(-20%) translateY(-120%) skewY(-20deg);
-    z-index: 1;
+    transform: translateX(-40%) translateY(-90%) skewY(-30deg);
+    width: 770px;
+    height: 320px;
+   z-index: 0;
+   
   }
   
   100% {
     transform: translateX(0%) translateY(0%) skewY(0deg);
-    z-index: 100;
+    width: 770px;
+    height: 380px;
+   z-index: 40;
+  
   }
 }
 

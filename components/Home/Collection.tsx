@@ -28,7 +28,7 @@ const Collection = () => {
             </h2>
           </div>
 
-          <Link href={'/rentals'} className="bg-primary max-w-[100px] cursor-pointer w-full text-black py-2 px-6 z-10 rounded-full hover:opacity-90 transition">
+          <Link href={'/rentals'} className="bg-primary font-bebas-neue text-[24px] max-w-[100px] cursor-pointer w-full text-black py-2 flex items-center justify-center z-10 rounded-full hover:opacity-90 transition">
             See All
           </Link>
 

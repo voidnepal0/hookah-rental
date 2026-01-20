@@ -3,8 +3,10 @@
 import Image from "next/image";
 import { HookahIcon } from "../icons/HookahIcon";
 import Link from "next/link";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Hero() {
+  const {theme} = useTheme()
   return (
     <section className="w-full max-w-[2000px] lg:pt-0 pt-[55px] mx-auto overflow-hidden bg-(--bg-primary) text-(--text-primary)">
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8 ">
@@ -30,7 +32,7 @@ export default function Hero() {
             {/* Yellow Blob Background */}
             <div className='absolute xl:-right-30 lg:-right-40 lg:top-20 w-[350px] h-[300px] md:w-[400px] md:h-[450px] lg:w-[850px] lg:h-[600px] '>
             <Image
-              src="/frame.svg"
+              src={theme === 'dark' ? '/frame.svg' : 'frameWhite.svg'}
               alt="Frame background"
               width={550}
               height={550}
