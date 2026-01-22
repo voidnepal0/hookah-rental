@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useTheme } from '../../contexts/ThemeContext'
@@ -7,6 +7,7 @@ import Image from 'next/image'
 import type { Login, Register } from '../../types/authTypes'
 import darkLogo from '@/public/logoDark.svg';
 import logo from '@/public/Logo.svg';
+import { useToast } from '../../hooks/useToast';
 
 interface AuthModalProps {
   isOpen: boolean
@@ -24,6 +25,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false)
   const { theme } = useTheme()
   const { login, register, error, clearError } = useAuth()
+  const { success, error: showError } = useToast()
+
+  useEffect(() => {
+    if (error) {
+      showError(error)
+      clearError()
+    }
+  }, [error, showError, clearError])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -41,13 +50,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     try {
       if (activeTab === 'login') {
         await login(formData as Login)
+        success('Successfully logged in!')
         onClose()
       } else {
         await register(formData as Register)
+        success('Account created successfully!')
         onClose()
       }
     } catch {
-      // Error is handled by AuthContext
+      // Error is handled by AuthContext and will be shown as toast
     } finally {
       setIsLoading(false)
     }
@@ -118,11 +129,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
-          )}
 
           {activeTab === 'register' && (
             <div className="mb-4">

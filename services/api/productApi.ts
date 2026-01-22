@@ -51,7 +51,9 @@ export const useGetProducts = (page = 1, limit = 10) => {
     queryFn: async () => {
       const response = await fetch(`${API_URL}/website/${SHOP_ID}/products?page=${page}&limit=${limit}`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || errorData.error || `Failed to fetch products (${response.status})`;
+        throw new Error(errorMessage);
       }
       return response.json();
     },
@@ -80,7 +82,9 @@ export const useGetProductsWithFilters = (filters: ProductFilters = {}) => {
       
       const response = await fetch(`${API_URL}/website/${SHOP_ID}/products?${params}`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || errorData.error || `Failed to fetch products with filters (${response.status})`;
+        throw new Error(errorMessage);
       }
       return response.json();
     },
@@ -98,7 +102,9 @@ export const useGetProduct = (productId: string) => {
     queryFn: async () => {
       const response = await fetch(`${API_URL}/website/${SHOP_ID}/products/${productId}`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || errorData.error || `Failed to fetch product (${response.status})`;
+        throw new Error(errorMessage);
       }
       return response.json();
     },

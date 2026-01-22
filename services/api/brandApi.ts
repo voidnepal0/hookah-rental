@@ -17,7 +17,9 @@ export const useGetBrands = () => {
     queryFn: async () => {
       const response = await fetch(`${API_URL}/website/${SHOP_ID}/brands`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || errorData.error || `Failed to fetch brands (${response.status})`;
+        throw new Error(errorMessage);
       }
       return response.json();
     },
@@ -35,7 +37,9 @@ export const useGetBrandById = (brandId: string) => {
     queryFn: async () => {
       const response = await fetch(`${API_URL}/website/${SHOP_ID}/brands/${brandId}`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || errorData.error || `Failed to fetch brand (${response.status})`;
+        throw new Error(errorMessage);
       }
       return response.json();
     },

@@ -16,7 +16,7 @@ import logo from '@/public/Logo.svg';
 import { LogIn} from 'lucide-react';
 import AuthModal from '../auth/AuthModal';
 import { LogOutIcon } from '../icons/LogoutIcon'
-
+import { useToast } from '../../hooks/useToast';
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -26,7 +26,7 @@ const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const pathname = usePathname();
-
+  const {success} = useToast();
   // Check if we're on a product detail page (under /rentals/)
   const isProductDetailPage = pathname.startsWith('/rentals/');
 
@@ -44,6 +44,8 @@ const Header = () => {
   const handleLogoutConfirm = () => {
     logout();
     setLogoutConfirmOpen(false);
+    success('Successfully logged out!');
+    
   };
 
   const handleLogoutCancel = () => {
@@ -302,35 +304,36 @@ const Header = () => {
       {/* Logout Confirmation Modal */}
       {logoutConfirmOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-(--bg-primary) relative text-(--text-primary) rounded-[16px] shadow-xl w-full max-w-sm font-poppins">
+          <div className="bg-(--bg-secondary) relative text-(--text-primary) rounded-[16px] shadow-xl w-full max-w-md font-poppins">
             {/* Header */}
             
 
             {/* Content */}
             <div className="p-6">
               <div className="flex justify-center items-center mb-8">
-                <div className={`flex justify-center items-center w-24 h-24 rounded-full ${theme === 'dark' ? 'text-white bg-red-500' : 'text-red-500 bg-red-100'}`}>
+                <div className={`flex justify-center items-center w-24 h-24 rounded-full ${theme === 'dark' ? 'text-white bg-[#AA1F1F]' : 'text-red-700 bg-red-100'}`}>
                   <LogOutIcon className="w-16 h-16" />
                 </div>
               </div>
               <h2 className='font-bold mb-2'>Log Out</h2>
               <p className=" text-(--text-secondary) font-poppins mb-6">
-                Are you sure you want to logout?
+                Are you sure you want to log out ? 
               </p>
 
               {/* Buttons */}
               <div className="flex gap-3">
                 <button
                   onClick={handleLogoutCancel}
-                  className="flex-1 border border-(--border-color) text-(--text-secondary) py-2 px-4 rounded-md font-medium font-poppins hover:bg-(--bg-secondary) transition-colors cursor-pointer"
+                  className="flex w-full border items-center justify-center border-(--border-color) text-(--text-secondary) py-2 px-4 rounded-md font-medium font-poppins hover:bg-(--bg-secondary) transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleLogoutConfirm}
-                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md font-medium font-poppins hover:bg-red-600 transition-colors cursor-pointer"
+                  className="flex w-full items-center gap-5  bg-[#AA1F1F] text-white py-2 px-4 rounded-md font-medium font-poppins hover:bg-red-600 transition-colors cursor-pointer"
                 >
-                  Logout
+                   <LogOutIcon className="w-7 h-7" />
+                   <p>Yes, Log Out</p>
                 </button>
               </div>
             </div>

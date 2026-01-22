@@ -14,9 +14,13 @@ export const useLogin = () => {
           },
           body: JSON.stringify(loginData),
         });
+        
         if (!response.ok) {
-          throw new Error('Login failed');
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.message || errorData.error || 'Login failed. Please check your credentials and try again.';
+          throw new Error(errorMessage);
         }
+        
         return response.json();
      }
    })
@@ -33,9 +37,13 @@ export const useRegister = () => {
           },
           body: JSON.stringify(registerData),
         });
+        
         if (!response.ok) {
-          throw new Error('Registration failed');
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.message || errorData.error || 'Registration failed. Please check your information and try again.';
+          throw new Error(errorMessage);
         }
+        
         return response.json();
      }
    })
