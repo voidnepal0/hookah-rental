@@ -67,17 +67,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed  inset-0 bg-black/50 z-50 flex items-center justify-center p-10">
-      <div className="bg-(--bg-primary) relative text-(--text-primary) rounded-lg shadow-xl w-full max-w-md font-poppins">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-28 p-4 overflow-y-auto scrollbar-hide">
+      <div className="bg-(--bg-primary) relative text-(--text-primary) rounded-lg shadow-xl w-full max-w-md font-poppins min-h-fit max-h-[90vh] overflow-y-auto">
         {/* Header with Logo */}
         <div className="flex flex-col items-center p-6 border-b border-(--border-color)">
+            <div>
+                <h2 className='font-poppins font-medium text-[28px] lg:text-[42px]'>Welcome to</h2>
+            </div>
           <div className="mb-4">
             <Image 
               src={theme === 'dark' ? logo : darkLogo} 
               alt="Logo" 
               width={120} 
-              height={40} 
-              className='w-auto h-auto' 
+              height={120} 
+              className='lg:w-120 lg:h-40 w-60 h-20' 
             />
           </div>
         

@@ -13,14 +13,16 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import darkLogo from '@/public/logoDark.svg';
 import logo from '@/public/Logo.svg';
-import { LogIn, LogOut } from 'lucide-react';
+import { LogIn} from 'lucide-react';
 import AuthModal from '../auth/AuthModal';
+import { LogOutIcon } from '../icons/LogoutIcon'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const pathname = usePathname();
@@ -37,6 +39,15 @@ const Header = () => {
 
   const handleUserIconClick = () => {
     setUserDropdownOpen(!userDropdownOpen);
+  };
+
+  const handleLogoutConfirm = () => {
+    logout();
+    setLogoutConfirmOpen(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setLogoutConfirmOpen(false);
   };
 
   return (
@@ -120,13 +131,14 @@ const Header = () => {
                     </div>
                     <button
                       onClick={() => {
-                        logout();
+                        setLogoutConfirmOpen(true);
                         setUserDropdownOpen(false);
                       }}
                       aria-label="Logout from account"
                       className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                     >
-                      <LogOut size={16} />
+                      
+                      <LogOutIcon className='w-4 h-4' />
                       Logout
                     </button>
                   </div>
@@ -194,13 +206,13 @@ const Header = () => {
                     </div>
                     <button
                       onClick={() => {
-                        logout();
+                        setLogoutConfirmOpen(true);
                         setUserDropdownOpen(false);
                       }}
                       aria-label="Logout from account"
                       className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                     >
-                      <LogOut size={16} />
+                      <LogOutIcon className='w-4 h-4' />
                       Logout
                     </button>
                   </div>
@@ -286,6 +298,45 @@ const Header = () => {
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)} 
       />
+
+      {/* Logout Confirmation Modal */}
+      {logoutConfirmOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-(--bg-primary) relative text-(--text-primary) rounded-[16px] shadow-xl w-full max-w-sm font-poppins">
+            {/* Header */}
+            
+
+            {/* Content */}
+            <div className="p-6">
+              <div className="flex justify-center items-center mb-8">
+                <div className={`flex justify-center items-center w-24 h-24 rounded-full ${theme === 'dark' ? 'text-white bg-red-500' : 'text-red-500 bg-red-100'}`}>
+                  <LogOutIcon className="w-16 h-16" />
+                </div>
+              </div>
+              <h2 className='font-bold mb-2'>Log Out</h2>
+              <p className=" text-(--text-secondary) font-poppins mb-6">
+                Are you sure you want to logout?
+              </p>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleLogoutCancel}
+                  className="flex-1 border border-(--border-color) text-(--text-secondary) py-2 px-4 rounded-md font-medium font-poppins hover:bg-(--bg-secondary) transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleLogoutConfirm}
+                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md font-medium font-poppins hover:bg-red-600 transition-colors cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
