@@ -8,18 +8,36 @@ import { SunIcon } from '../icons/SunIcon'
 import { MoonIcon } from '../icons/MoonIcon'
 import { MenuIcon, CloseIcon } from '../icons/MenuIcon'
 import { useTheme } from '../../contexts/ThemeContext'
+import { useAuth } from '../../contexts/AuthContext'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import darkLogo from '@/public/logoDark.svg';
 import logo from '@/public/Logo.svg';
+import { LogIn, LogOut } from 'lucide-react';
+import AuthModal from '../auth/AuthModal';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
 
   // Check if we're on a product detail page (under /rentals/)
   const isProductDetailPage = pathname.startsWith('/rentals/');
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setUserDropdownOpen(false);
+    }, 200);
+    setHoverTimeout(timeout);
+  };
+
+  const handleUserIconClick = () => {
+    setUserDropdownOpen(!userDropdownOpen);
+  };
 
   return (
     <>
@@ -77,9 +95,62 @@ const Header = () => {
                 <MoonIcon className='w-6 h-6 fill-primary text-primary group-hover:scale-110 transition-transform' />
               )}
             </button>
-            <button className='group bg-primary rounded-full p-1 cursor-pointer hover:scale-110 transition-transform'>
-              <UserIcon className='w-6 h-6 text-primary group-hover:scale-110 transition-transform' />
-            </button>
+            {user ? (
+              <div className='relative'>
+                <button 
+                  onClick={handleUserIconClick}
+                  className='group bg-primary rounded-full p-1 cursor-pointer hover:scale-110 transition-transform'
+                  title="User menu"
+                >
+                  <UserIcon className='w-6 h-6 text-primary group-hover:scale-110 transition-transform' />
+                </button>
+                {userDropdownOpen && (
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                    onMouseEnter={() => {
+                      if (hoverTimeout) {
+                        clearTimeout(hoverTimeout);
+                      }
+                    }}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="p-3 border-b border-gray-200">
+                      <p className="font-semibold font-poppins text-gray-800 text-sm">{user?.email}</p>
+                      
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setUserDropdownOpen(false);
+                      }}
+                      aria-label="Logout from account"
+                      className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button 
+                onClick={() => setAuthModalOpen(true)}
+                 className="relative hidden lg:flex items-center gap-2 border px-5 py-1 rounded-xl font-semibold font-poppins cursor-pointer transition-all duration-600 ease-custom group hover:bg-(--bg-primary) hover:text-(--text-primary) hover:pr-5"
+          >
+            {/* Button text */}
+            <span className="relative z-1">
+              Login
+            </span>
+
+            {/* Icon with slide animation */}
+            <span className="relative overflow-hidden w-0 transition-all duration-700 ease-custom group-hover:w-6">
+              <LogIn
+                className="transition-all duration-700 ease-custom"
+                size={24}
+              />
+            </span>
+              </button>
+            )}
             <button className='relative cursor-pointer hover:scale-110 transition-transform'>
               <CartIcon className='w-8 h-8 text-primary group-hover:scale-110 transition-transform' />
               <span className='absolute font-poppins font-semibold top-0 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center'>3</span>
@@ -98,9 +169,51 @@ const Header = () => {
                 <MoonIcon className='w-6 h-6 fill-primary text-primary group-hover:scale-110 transition-transform' />
               )}
             </button>
-            <button className='group bg-primary rounded-full p-1 cursor-pointer hover:scale-110 transition-transform'>
-              <UserIcon className='w-6 h-6 text-primary group-hover:scale-110 transition-transform' />
-            </button>
+            {user ? (
+              <div className='relative'>
+                <button 
+                  onClick={handleUserIconClick}
+                  className='group bg-primary rounded-full p-1 cursor-pointer hover:scale-110 transition-transform'
+                  title="User menu"
+                >
+                  <UserIcon className='w-6 h-6 text-primary group-hover:scale-110 transition-transform' />
+                </button>
+                {userDropdownOpen && (
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                    onMouseEnter={() => {
+                      if (hoverTimeout) {
+                        clearTimeout(hoverTimeout);
+                      }
+                    }}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div className="p-3 border-b border-gray-200">
+                      <p className="font-semibold text-gray-800 text-sm">{user?.email}</p>
+                      <p className="text-xs text-gray-500">Role: {user?.role}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setUserDropdownOpen(false);
+                      }}
+                      aria-label="Logout from account"
+                      className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut size={16} />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button 
+                onClick={() => setAuthModalOpen(true)}
+               className="relative  items-center gap-2 border px-5 py-1 rounded-xl font-semibold font-poppins cursor-pointer transition-all duration-600 ease-custom group hover:bg-(--bg-primary) hover:text-(--text-primary) hover:pr-5"
+          >
+                Login
+              </button>
+            )}
             <button className='relative cursor-pointer hover:scale-110 transition-transform'>
               <CartIcon className='w-8 h-8 text-primary group-hover:scale-110 transition-transform' />
               <span className='absolute font-poppins font-semibold top-0 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center'>3</span>
@@ -167,6 +280,12 @@ const Header = () => {
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+      />
     </>
   )
 }
