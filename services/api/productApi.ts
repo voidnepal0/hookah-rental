@@ -3,7 +3,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { API_URL, SHOP_ID } from "../axiosInstance";
+import { apiClient, SHOP_ID } from "../axiosInstance";
 import type { Product, ProductResponse, ProductFilters } from "@/types/productTypes";
 
 // Server-side function to get a product by name or ID
@@ -12,29 +12,27 @@ export async function getProductByIdOrName(identifier: string): Promise<Product 
   
   try {
     // First try to fetch by ID
-    const response = await fetch(`${API_URL}/website/${SHOP_ID}/products/${identifier}`);
+    const response = await apiClient.get(`/website/${SHOP_ID}/products/${identifier}`);
+    return response.data;
     
-    if (response.ok) {
-      return response.json();
-    }
-    
+  } catch {
     // If not found by ID, try to fetch all and filter by name
-    const allProductsResponse = await fetch(`${API_URL}/website/${SHOP_ID}/products?limit=100`);
-    if (!allProductsResponse.ok) return null;
-    
-    const data = await allProductsResponse.json();
-    const normalizedIdentifier = identifier?.toString().toLowerCase() || '';
-    
-    return data.data?.find((product: Product) => 
-      product.id === identifier || 
-      (product.name && (
-        product.name.toLowerCase() === normalizedIdentifier ||
-        product.name.toLowerCase().replace(/\s+/g, '-') === normalizedIdentifier
-      ))
-    ) || null;
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
+    try {
+      const allProductsResponse = await apiClient.get(`/website/${SHOP_ID}/products?limit=100`);
+      const data = allProductsResponse.data;
+      const normalizedIdentifier = identifier?.toString().toLowerCase() || '';
+      
+      return data.data?.find((product: Product) => 
+        product.id === identifier || 
+        (product.name && (
+          product.name.toLowerCase() === normalizedIdentifier ||
+          product.name.toLowerCase().replace(/\s+/g, '-') === normalizedIdentifier
+        ))
+      ) || null;
+    } catch (fallbackError) {
+      console.error('Error fetching product:', fallbackError);
+      return null;
+    }
   }
 }
 
@@ -49,13 +47,10 @@ export const useGetProducts = (page = 1, limit = 10) => {
   return useQuery<ProductResponse>({
     queryKey: ["products", page, limit],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/website/${SHOP_ID}/products?page=${page}&limit=${limit}`);
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || `Failed to fetch products (${response.status})`;
-        throw new Error(errorMessage);
-      }
-      return response.json();
+      const response = await apiClient.get(`/website/${SHOP_ID}/products`, {
+        params: { page, limit }
+      });
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -71,22 +66,17 @@ export const useGetProductsWithFilters = (filters: ProductFilters = {}) => {
   return useQuery<ProductResponse>({
     queryKey: ["products", filters],
     queryFn: async () => {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-      });
+      const params: Record<string, string | number> = {
+        page,
+        limit,
+      };
       
-      if (category) params.append('category', category);
-      if (brand) params.append('brand', brand);
-      if (q) params.append('q', q);
+      if (category) params.category = category;
+      if (brand) params.brand = brand;
+      if (q) params.q = q;
       
-      const response = await fetch(`${API_URL}/website/${SHOP_ID}/products?${params}`);
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || `Failed to fetch products with filters (${response.status})`;
-        throw new Error(errorMessage);
-      }
-      return response.json();
+      const response = await apiClient.get(`/website/${SHOP_ID}/products`, { params });
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -100,13 +90,8 @@ export const useGetProduct = (productId: string) => {
   return useQuery<Product>({
     queryKey: ["product", productId],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/website/${SHOP_ID}/products/${productId}`);
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || `Failed to fetch product (${response.status})`;
-        throw new Error(errorMessage);
-      }
-      return response.json();
+      const response = await apiClient.get(`/website/${SHOP_ID}/products/${productId}`);
+      return response.data;
     },
     enabled: !!productId,
     staleTime: 5 * 60 * 1000, // 5 minutes

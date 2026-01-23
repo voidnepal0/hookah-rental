@@ -3,7 +3,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { API_URL, SHOP_ID } from "../axiosInstance";
+import { apiClient, SHOP_ID } from "../axiosInstance";
 import type { Brand, BrandResponse } from "@/types/brandTypes";
 
 // ===== QUERIES =====
@@ -15,13 +15,8 @@ export const useGetBrands = () => {
   return useQuery<BrandResponse>({
     queryKey: ["brands"],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/website/${SHOP_ID}/brands`);
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || `Failed to fetch brands (${response.status})`;
-        throw new Error(errorMessage);
-      }
-      return response.json();
+      const response = await apiClient.get(`/website/${SHOP_ID}/brands`);
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -35,13 +30,8 @@ export const useGetBrandById = (brandId: string) => {
   return useQuery<Brand>({
     queryKey: ["brand", brandId],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/website/${SHOP_ID}/brands/${brandId}`);
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || errorData.error || `Failed to fetch brand (${response.status})`;
-        throw new Error(errorMessage);
-      }
-      return response.json();
+      const response = await apiClient.get(`/website/${SHOP_ID}/brands/${brandId}`);
+      return response.data;
     },
     enabled: !!brandId,
     staleTime: 5 * 60 * 1000, // 5 minutes
