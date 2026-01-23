@@ -28,7 +28,7 @@ const Collection = () => {
             </h2>
           </div>
 
-          <Link href={'/rentals'} className="bg-primary font-bebas-neue text-[24px] max-w-[100px] cursor-pointer w-full text-black py-2 flex items-center justify-center z-10 rounded-full hover:opacity-90 transition">
+          <Link href={'/rentals'} className="bg-primary font-bebas-neue text-[24px] max-w-[100px] cursor-pointer w-full text-black py-1 flex items-center justify-center z-10 rounded-full hover:opacity-90 transition">
             See All
           </Link>
 
@@ -39,41 +39,42 @@ const Collection = () => {
         </header>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4  h-[700px]  gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 2xl:h-[900px] lg:h-[800px] sm:h-[800px] h-[1300px]  gap-4">
 
           {product.slice(0, 5).map((item) => {
             const productName = item.name.toLowerCase().replace(/\s+/g, '-');
             return (
-            <Link
+            <div
               key={item.id}
-              href={`/rentals/${productName}`}
               className={`relative rounded-[20px] block  transition-transform duration-300
               ${item.id === 1 ? "col-span-2 row-span-2" : ""}`}
             >
               {/* Image */}
-              <div className="flex flex-col h-full">
-              <div className={`${item.id === 1 ? 'h-full' : 'h-full'} relative`}>
+              <div className="flex flex-col z-30 h-full">
+              <Link
+               href={`/rentals/${productName}`}
+              className={`${item.id === 1 ? 'h-full' : 'h-full'} relative z-10`}>
                 <Image
                   src={item.image}
                   alt={item.name}
                   fill
-                  className={`${item.id === 1 ? 'object-cover' : 'object-cover'} rounded-[20px]`}
+                  className={`${item.id === 1 ? 'h-20' : ''} object-cover rounded-[20px]`}
                   sizes="(max-width: 768px) 50vw, 25vw"
                 />
-              </div>
+              </Link>
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 " />
+              <div className="absolute inset-0  " />
 
               {/* Badge */}
-              <div className="absolute top-4 left-4 z-10">
+              <div className="absolute font-poppins font-medium top-4 left-4 z-10">
                 <span className="bg-primary text-black text-xs px-3 py-1 rounded-full">
                   {item.tag}
                 </span>
               </div>
 
               {/* Content */}
-              <div className="mt-1 font-poppins">
+              <div className="mt-1 font-poppins z-10">
                 <h3 className=" text-[16px] font-medium leading-[24px]">
                   {item.name}
                 </h3>
@@ -81,24 +82,19 @@ const Collection = () => {
               
 
                 <div className="flex justify-between">
-                  <div>
+             
                     <p className="text-[14px] ">Per Hour</p>
-                    <p className="text-[16px] font-semibold">
+                    <p className="text-[16px] text-primary font-semibold">
                       Rs {item.price[0].amount}
                     </p>
-                  </div>
+                  
 
-                  <div>
-                    <p className="text-[14px]">Per Day</p>
-                    <p className="text-[16px] font-semibold">
-                      Rs {item.price[1]?.amount || item.price[0].amount}
-                    </p>
-                  </div>
+                 
                   </div>
                 </div>
               </div>
 
-            </Link>
+            </div>
           );
         })}
 

@@ -9,6 +9,8 @@ import { FilterIcon } from '../../components/icons/FilterIcon';
 import { useGetProducts } from '@/services';
 import { Product, ProductResponse } from '@/types/productTypes';
 import { API_URL } from '@/services/axiosInstance';
+import RentalsSkeleton from '@/components/Skeltons/RentalsSkeleton';
+
 interface RentalsClientProps {
   initialProducts?: ProductResponse;
 }
@@ -17,7 +19,7 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
   const { theme } = useTheme();
   const [sortBy, setSortBy] = useState<string>('recommended');
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 650]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1200]);
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const itemsPerPage = 8;
@@ -107,21 +109,21 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Show skeleton when loading and no initial data
+  if (apiProduct.isLoading && !initialProducts) {
+    return <RentalsSkeleton />;
+  }
+
   return (
     <React.Fragment>
       <section 
-        className="w-full relative max-w-[2000px] mx-auto font-poppins  lg:pt-[80px] pt-[55px]"
+        className="w-full   max-w-[2000px] mx-auto font-poppins  lg:pt-[80px] pt-[55px]"
         style={{
           backgroundColor: "var(--bg-secondary)",
           color: "var(--text-primary)",
         }}
       >
-        <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-                      <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
-                    </div>
-                     <div className="absolute  -bottom-10 left-0 pointer-events-none z-0">
-                      <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
-                    </div>
+        
         <div className="max-w-[1440px] mx-auto px-4 lg:px-8 py-8">
           {/* Breadcrumb */}
           <nav className="flex items-center justify-between mb-6 font-poppins text-sm">
@@ -283,66 +285,77 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
                 </div>
               </div>
 
-              {/* Products Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                {paginatedProducts.map((prod) => (
-                  <Link 
-                    key={prod.id}
-                    href={`/rentals/${prod.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="group relative"
-                   
+              {/* Products Grid or No Products Found */}
+              {filteredAndSortedProducts.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="w-24 h-24 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <svg className="w-12 h-12 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                  </div>
+                  <h1 className="text-2xl font-bold mb-4">No Products Found</h1>
+                  <p className="mb-6 opacity-70">Try adjusting your filters or search terms to find what you&apos;re looking for.</p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="inline-block px-6 py-2 cursor-pointer bg-primary text-black rounded-lg font-medium hover:bg-yellow-400 transition-colors"
                   >
-                    {/* Category Badge */}
-                    <div className="absolute top-4 left-4 z-20  bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
-                      {prod.shopProductCategory.name}
-                    </div>
-
-                    {/* Image Container */}
-                    <div className="relative h-80">
-                      <div className="absolute h-full w-full inset-0 flex items-center   justify-center z-10">
-                        
-                        <Image
-                          src={API_URL ? `${API_URL}${prod.imageUrl}` : prod.imageUrl}
-                          alt={prod.name}
-                          width={200}
-                          height={200}
-                          className={`w-full  h-full object-cover transition-all rounded-2xl  duration-300`}
-                       
-                        />
+                    Clear All Filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                  {paginatedProducts.map((prod) => (
+                    <div key={prod.id} className="group z-30 relative">
+                      {/* Category Badge */}
+                      <div className="absolute top-4 left-4 z-20 bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
+                        {prod.shopProductCategory.name}
                       </div>
-                    </div>
 
-                    {/* Content */}
-                    <div className="p-4">
-                      <h3 className="text-[18px] uppercase tracking-wider mb-2 truncate">
-                        {prod.name}
-                      </h3>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="font-poppins text-sm opacity-70">
-                            Per hour
-                          </span>
-                          <div className=" text-[24px] text-primary">
-                            Rs {prod.variants && prod.variants.length > 0 ? (prod.variants[0].sellingPrice as number) : prod.sellingPrice}
+                      {/* Image Container - Clickable */}
+                      <Link 
+                        href={`/rentals/${prod.name.toLowerCase().replace(/\s+/g, '-')}`}
+                        className="block relative h-80"
+                      >
+                        <div className="absolute h-full w-full inset-0 flex items-center justify-center z-10">
+                          <Image
+                            src={API_URL ? `${API_URL}${prod.imageUrl}` : prod.imageUrl}
+                            alt={prod.name}
+                            width={200}
+                            height={200}
+                            className={`w-full h-full object-cover transition-all rounded-2xl duration-300`}
+                          />
+                        </div>
+                      </Link>
+
+                      {/* Content - Not clickable */}
+                      <div className="">
+                        <h3 className="text-[18px] pt-2  uppercase tracking-wider  truncate">
+                          {prod.name}
+                        </h3>
+                        
+                        <div className="flex items-center  justify-between">
+                          <div>
+                            <span className="font-poppins text-sm opacity-70">
+                              Per hour
+                            </span>
+                            <div className="text-[24px] text-primary">
+                              Rs {prod.variants && prod.variants.length > 0 ? (prod.variants[0].sellingPrice as number) : prod.sellingPrice}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </Link>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-2">
                   <button
                     onClick={() => goToPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    className="p-2 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary "
-                    style={{
-                      backgroundColor: "var(--bg-secondary)",
-                    }}
+                    className="p-2 cursor-pointer bg-(--bg-primary) rounded-lg transition-colors disabled:cursor-not-allowed hover:bg-primary"
+                    
                   >
                     <ChevronLeft size={20} />
                   </button>
@@ -363,15 +376,12 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
                       <button
                         key={pageNum}
                         onClick={() => goToPage(pageNum)}
-                        className={`w-10 h-10 rounded-lg cursor-pointer font-poppins font-medium transition-colors ${
+                        className={`w-10 h-10 rounded-lg bg-(--bg-primary) cursor-pointer font-poppins font-medium transition-colors ${
                           currentPage === pageNum
                             ? 'bg-primary text-black'
                             : 'hover:bg-primary hover:text-black'
                         }`}
-                        style={{
-                          backgroundColor: currentPage === pageNum ? 'var(--primary)' : 'var(--bg-secondary)',
-                          color: currentPage === pageNum ? 'var(--text-primary)' : 'var(--text-secondary)',
-                        }}
+                       
                       >
                         {pageNum}
                       </button>
@@ -384,9 +394,7 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
                       <button
                         onClick={() => goToPage(totalPages)}
                         className={`w-10 h-10 rounded-lg font-poppins font-medium transition-colors hover:bg-primary ${theme === 'dark' ? 'text-white' : 'text-black'}`}
-                        style={{
-                          backgroundColor: "var(--bg-primary)",
-                        }}
+                       
                       >
                         {totalPages}
                       </button>
@@ -396,10 +404,8 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
                   <button
                     onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
                     disabled={currentPage === totalPages}
-                    className="p-2 cursor-pointer rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary bg-(--bg-primary)"
-                    style={{
-                      backgroundColor: "var(--bg-secondary)",
-                    }}
+                    className="p-2 cursor-pointer rounded-lg transition-colors disabled:cursor-not-allowed hover:bg-primary bg-(--bg-primary)"
+                    
                   >
                     <ChevronRight size={20} />
                   </button>
@@ -407,6 +413,14 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
               )}
             </main>
           </div>
+        </div>
+        <div className='relative pt-60'>
+         <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+                      <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+                    </div>
+                     <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
+                      <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
+                    </div>
         </div>
       </section>
 

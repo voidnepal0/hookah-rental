@@ -4,14 +4,14 @@ const Experience = () => {
   return (
     <section className='max-w-[2000px] mx-auto bg-(--bg-primary) lg:py-20 py-5  text-(--text-primary)'>
         <div className='max-w-[1440px] mx-auto px-4 lg:px-8'>
-      <header className="  mb-10 relative z-10">
+      <header className="   relative z-10">
           <div className="flex  items-center justify-center gap-6">
             <span className="bg-primary h-10 lg:h-15 w-3"></span>
-            <h2 className="font-bebas-neue tracking-[3]  text-[28px] lg:text-[48px]">
+            <h2 className="font-bebas-neue tracking-[3]    text-[28px] lg:text-[48px]">
               The Experience
             </h2>
           </div>
-          <p className="font-bebas-neue text-center lg:text-[60px] text-[36px]   font-medium">
+          <p className="font-bebas-neue text-center lg:-mt-4 -mt-1 lg:text-[60px] text-[36px]   font-medium">
             More than just a smoke
           </p>
         </header>

@@ -8,6 +8,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useGetProducts } from '@/services';
 import { Product } from '@/types/productTypes';
 import { API_URL } from '@/services/axiosInstance';
+import ProductDetailsSkeleton from '@/components/Skeltons/ProductDetailsSkeleton';
 
 interface ProductDetailsClientProps {
   initialProduct: Product | null;
@@ -42,7 +43,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   }, [currentProduct]);
 
   // Fetch all products to find the matching one by name
-  const { data: allProducts } = useGetProducts(1, 100); 
+  const { data: allProducts, isLoading: isProductsLoading } = useGetProducts(1, 100); 
   
   // Get recommended products (excluding current product)
   const recommendedProducts = (() => {
@@ -115,14 +116,11 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   };
 
   if (!currentProduct) {
-    return (
-      <div className="min-h-screen lg:pt-[160px] max-w-[2000px] mx-auto pt-[80px] flex items-center justify-center" style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading product details...</p>
-        </div>
-      </div>
-    );
+    return <ProductDetailsSkeleton />;
+  }
+
+  if (isProductsLoading) {
+    return <ProductDetailsSkeleton />;
   }
 
   if (!allProducts?.data) {
@@ -140,13 +138,8 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   }
 
   return (
-    <div className=" relative max-w-[2000px] mx-auto lg:pt-[80px] pt-[50px]" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-primary)" }}>
-       <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-                    <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
-                  </div>
-                   <div className="absolute  -bottom-10 left-0 pointer-events-none z-0">
-                    <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
-                  </div>
+    <section className=" relative max-w-[2000px] mx-auto lg:pt-[80px] pt-[50px]" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-primary)" }}>
+      
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 mb-6 text-sm">
@@ -161,7 +154,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
           <span className="font-medium">{productDisplayName}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-6">
           {/* Left Side - Thumbnails + Main Image */}
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Vertical Thumbnail Strip */}
@@ -178,7 +171,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                     src={img}
                     alt={`${productDisplayName} ${index + 1}`}
                     fill
-                    className="object-cover"
+                    className="sm:object-cover"
                     sizes="(max-width: 1024px) 80px, 96px"
                     priority
                   />
@@ -187,7 +180,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
             </div>
 
             {/* Main Image */}
-            <div className="relative w-full lg:w-[400px] h-[400px] lg:h-[500px] rounded-2xl overflow-hidden order-1 lg:order-2" style={{ backgroundColor: "var(--bg-secondary)" }}>
+            <div className="relative w-full lg:w-[400px] h-[600px] sm:h-[500px] rounded-2xl overflow-hidden order-1 lg:order-2" style={{ backgroundColor: "var(--bg-secondary)" }}>
               {currentProduct.shopProductCategory && (
                 <div className="absolute top-4 left-4 z-10">
                   <span className="bg-primary text-black px-3 py-1 rounded-full font-bold text-xs uppercase">
@@ -207,21 +200,18 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
           </div>
 
           {/* Right Side - Product Details */}
-          <div className="space-y-6">
+          <div className="space-y-6 font-poppins">
             {/* Product Title */}
-            <div>
+            <div className=''>
               <h1 className="text-3xl font-bold mb-2">{productDisplayName}</h1>
               
               {/* Pricing Section */}
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <div className="text-sm opacity-70">Per Hour</div>
-                  <span className="text-xl font-bold">Rs {hourly}</span>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm opacity-70">Per Day</div>
-                  <div className="text-lg font-bold">Rs {daily}</div>
-                </div>
+              <div className="flex items-center justify-between">
+               
+                  <div className="text-sm ">Per Hour</div>
+                  <div className="text-xl text-primary font-bold">Rs {hourly}</div>
+                
+               
               </div>
             </div>
 
@@ -236,12 +226,12 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                   <span className="text-xs font-medium">{currentProduct.brand.name}</span>
                 </div>
               )}
-              {currentProduct.sku && (
+              {/* {currentProduct.sku && (
                 <div className="mt-1">
                   <span className="text-xs opacity-70">SKU: </span>
                   <span className="text-xs font-medium">{currentProduct.sku}</span>
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Duration Selection */}
@@ -302,7 +292,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
         </div>
 
         {/* Recommended Products */}
-        <div className="lg:mt-30 mt-20 pb-20">
+        <div className="lg:mt-30 mt-20 z-30 pb-20">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-6">
             <span className="bg-primary h-10 lg:h-15 w-3"></span>
@@ -329,10 +319,10 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
           <div id="recommended-scroll-container" className="overflow-x-auto scrollbar-hide">
             <div id="recommended-container" className="flex gap-4 pb-4" style={{ minWidth: 'max-content' }}>
               {recommendedProducts.map((prod: Product) => (
-                <Link 
+                <div 
                   key={prod.id}
-                  href={`/rentals/${prod.name.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="group font-poppins relative overflow-hidden rounded-2xl lg:w-[260px] w-[220px] transition-all duration-300 hover:scale-105 shrink-0"
+                  
+                  className="group font-poppins relative overflow-hidden rounded-2xl lg:w-[260px] w-[220px]  shrink-0"
                 >
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4 z-20 bg-primary text-black px-3 py-1 rounded-full font-poppins font-bold text-xs uppercase">
@@ -340,15 +330,15 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                   </div>
 
                   {/* Image Container */}
-                  <div className="h-[450px]">
+                  <Link href={`/rentals/${prod.name.toLowerCase().replace(/\s+/g, '-')}`} className="h-[450px]">
                     <Image
                       src={API_URL ? `${API_URL}${prod.imageUrl}` : prod.imageUrl}
                       alt={prod.name}
                       width={200}
                       height={200}
-                      className="w-full h-[450px] object-cover rounded-2xl"
+                      className="w-full h-[450px] object-cover rounded-2xl "
                     />
-                  </div>
+                  </Link>
 
                   {/* Content */}
                   <div className="mt-1">
@@ -367,7 +357,7 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                       </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -389,7 +379,15 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
           </div>
         </div>
       </div>
-    </div>
+       <div className='relative lg:pt-40 pt-60'>
+                   <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+                                <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+                              </div>
+                               <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
+                                <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
+                              </div>
+                  </div>
+    </section>
   );
 };
 

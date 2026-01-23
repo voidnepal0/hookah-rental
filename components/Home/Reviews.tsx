@@ -36,13 +36,8 @@ const { theme } = useTheme();
   const nextReviewData = reviews[(currentIndex + 1) % reviews.length]
 
   return (
-   <section className='relative lg:h-screen h-[85vh] max-w-[2000px] overflow-hidden pb-10 lg:pb-0 lg:pt-[160px] pt-[80px] mx-auto bg-(--bg-secondary) text-(--text-primary)'>
-    <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-              <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
-            </div>
-             <div className="absolute  -bottom-10 left-0 pointer-events-none z-0">
-              <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
-            </div>
+   <section className=' max-w-[2000px] overflow-hidden  lg:pb-0 lg:pt-[160px] pt-[80px] mx-auto bg-(--bg-secondary) text-(--text-primary)'>
+    
     <div className='max-w-[1440px]  px-4 lg:px-8 mx-auto'>
        <header className="mb-10 lg:mb-0  relative ">
           <div className="flex items-center gap-6">
@@ -79,7 +74,7 @@ const { theme } = useTheme();
 
           {/* Current Review Card (on top, centered) */}
           <div 
-            className={`absolute w-full    bg-(--bg-primary) z-10 rounded-2xl shadow-2xl p-6  transition-all duration-300 ease-out ${
+            className={`absolute w-full    bg-(--bg-primary) z-30 rounded-2xl shadow-2xl p-6  transition-all duration-300 ease-out ${
               isAnimating ? 'md:max-w-[820px] sm:max-w-xl max-w-sm h-[320px]' : ' md:max-w-[770px] sm:max-w-lg max-w-xs  h-[380px]'
             }`}
             style={{ zIndex: 2, }}
@@ -99,7 +94,7 @@ const { theme } = useTheme();
           {/* Navigation Buttons */}
           <button
             onClick={prevReview}
-            className="hidden cursor-pointer lg:block absolute xl:left-20 lg:left-5  z-10 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
+            className="hidden cursor-pointer lg:block absolute xl:left-20 lg:left-5  z-30 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
             style={{ transform: 'translateX(-50%)' }}
           >
             <ArrowLeftIcon className='w-10 h-10' />
@@ -107,7 +102,7 @@ const { theme } = useTheme();
           
           <button
             onClick={nextReview}
-            className="hidden lg:block cursor-pointer absolute xl:right-20 lg:right-5 z-10 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
+            className="hidden lg:block cursor-pointer absolute xl:right-20 lg:right-5 z-30 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
             style={{ transform: 'translateX(50%)' }}
           >
             <ArrowRightIcon className='w-10 h-10' />
@@ -115,7 +110,7 @@ const { theme } = useTheme();
 
           <button
             onClick={prevReview}
-            className="block lg:hidden cursor-pointer absolute -bottom-20  -translate-x-1/2 z-10 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
+            className="block lg:hidden cursor-pointer absolute -bottom-20  -translate-x-1/2 z-30 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
             style={{ transform: 'translateX(-50%)' }}
           >
             <ArrowLeftIcon className='w-8 h-8' />
@@ -123,13 +118,21 @@ const { theme } = useTheme();
           
           <button
             onClick={nextReview}
-            className="block lg:hidden absolute cursor-pointer  -bottom-20 translate-x-1/2 z-10 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
+            className="block lg:hidden absolute cursor-pointer  -bottom-20 translate-x-1/2 z-30 bg-primary text-black rounded-full p-2 hover:scale-110 transition-transform"
             style={{ transform: 'translateX(50%)' }}
           >
            <ArrowRightIcon className='w-8 h-8' />
           </button>
         </div>
     </div>
+     <div className='relative lg:pt-40 pt-100'>
+             <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+                          <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+                        </div>
+                         <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
+                          <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
+                        </div>
+            </div>
    </section>
   )
 }

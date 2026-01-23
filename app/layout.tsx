@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins, Bebas_Neue } from "next/font/google";
+import { Poppins, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
@@ -8,15 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import QueryProvider from "../providers/QueryProvider";
 import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -43,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${bebasNeue.variable} antialiased`}
+        className={`${poppins.variable} ${bebasNeue.variable} antialiased`}
       >
         <ThemeProvider>
           <QueryProvider>

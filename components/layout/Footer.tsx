@@ -42,7 +42,7 @@ const Footer = () => {
 
           {/* Right - Contact */}
           <div className="flex flex-col gap-2 items-end justify-center">
-            <h1 className="font-poppins text-[18px] lg:text-[24px] font-bold">Contact Us</h1>
+            <p className="font-poppins text-[18px] lg:text-[24px] font-bold">Contact Us</p>
             <p className="font-poppins text-[12px] lg:text-[14px]">9861XXXXXX / 9862XXXXXX</p>
           </div>
         </div>

@@ -63,9 +63,9 @@ const CateringClient = () => {
             <header className=" mb-2 relative z-10">
               <div className="flex  items-center gap-6">
                 <span className="bg-primary h-10 lg:h-15 w-3"></span>
-                <h2 className="font-bebas-neue text-[28px] lg:text-[34px] xl:text-[48px]">
+                <h1 className="font-bebas-neue text-[28px] lg:text-[34px] xl:text-[48px]">
                   Get booking leads immediately.
-                </h2>
+                </h1>
               </div>
               <p className="font-bebas-neue xl:text-[60px] lg:text-[50px] leading-tight text-[32px]   font-medium">
                 Hookah Catering for Events & Parties

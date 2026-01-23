@@ -13,9 +13,9 @@ const WhoAreWe = () => {
                  <div className="absolute block lg:hidden  bottom-0  -right-10 pointer-events-none z-0">
                    <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
                  </div>
-      <div className="max-w-[1440px] z-10 flex flex-col lg:flex-row items-start justify-between gap-10 mx-auto px-4 lg:px-8">
+      <div className="max-w-[1440px] z-10 flex flex-col-reverse lg:flex-row items-start justify-between gap-10 mx-auto px-4 lg:px-8">
         <div className="w-full lg:w-1/2 z-10">
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1  md:grid-cols-2 gap-5">
             {WhoWeAre.map((item) => (
               <div
                 key={item.id}

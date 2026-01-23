@@ -32,13 +32,8 @@ const ContactForm = () => {
   }
 
   return (
-    <section className="max-w-[2000px]  relative bg-(--bg-secondary) text-(--text-primary) lg:py-12 py-5 mx-auto ">
-         <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-                      <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
-                    </div>
-                     <div className="absolute  lg:-bottom-10 -bottom-5 left-0 pointer-events-none z-0">
-                      <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
-                    </div>
+    <section className="max-w-[2000px]  relative bg-(--bg-secondary) text-(--text-primary) lg:pt-12 pt-5 mx-auto ">
+         
         <div className='max-w-[1440px]  mx-auto px-4 lg:px-8'>
       <div className="flex  lg:items-center  justify-between flex-col lg:flex-row  gap-8">
         {/* Left Side - Contact Form */}
@@ -204,6 +199,26 @@ const ContactForm = () => {
             ></iframe>
           </div>
       </div>
+      <div className="relative lg:pt-40 pt-90">
+              <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+                <Image
+                  src={theme === "dark" ? "/hookahBlack.svg" : "/hookah.svg"}
+                  alt="smoke"
+                  width={250}
+                  height={250}
+                  className="w-auto h-auto"
+                />
+              </div>
+              <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
+                <Image
+                  src={theme === "dark" ? "/cloudBlack.svg" : "/cloud.svg"}
+                  alt="smoke"
+                  width={250}
+                  height={250}
+                  className="lg:w-auto lg:h-auto"
+                />
+              </div>
+            </div>
     </section>
   )
 }

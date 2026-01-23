@@ -2,11 +2,7 @@
 
 @theme {
   --color-primary: #F2CC0D;
-
 }
-
-
-
 @layer base {
   :root {
     --font-poppins: var(--font-poppins);
