@@ -3,54 +3,30 @@ import React, { useState } from 'react'
 import { CartIcon } from '../icons/CartIcon'
 import { navConstant } from '../../constants/navConstant'
 import Image from 'next/image'
-import {UserIcon} from '../icons/UserIcon'
 import { SunIcon } from '../icons/SunIcon'
 import { MoonIcon } from '../icons/MoonIcon'
 import { MenuIcon, CloseIcon } from '../icons/MenuIcon'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useAuth } from '../../contexts/AuthContext'
+import { useCart } from '../../contexts/CartContext'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import darkLogo from '@/public/logoDark.svg';
-import logo from '@/public/Logo.svg';
+import { usePathname, useRouter } from 'next/navigation'
+import darkLogo from '@/public/layout/logoDark.svg';
+import logo from '@/public/layout/Logo.svg';
 import { LogIn} from 'lucide-react';
 import AuthModal from '../auth/AuthModal';
-import { LogOutIcon } from '../icons/LogoutIcon'
-import { useToast } from '../../hooks/useToast';
+import ProfileIcon from './ProfileIcon';
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const { getCartCount } = useCart();
   const pathname = usePathname();
-  const {success} = useToast();
+  const router = useRouter();
   // Check if we're on a product detail page (under /rentals/)
   const isProductDetailPage = pathname.startsWith('/rentals/');
-
-  const handleMouseLeave = () => {
-    const timeout = setTimeout(() => {
-      setUserDropdownOpen(false);
-    }, 200);
-    setHoverTimeout(timeout);
-  };
-
-  const handleUserIconClick = () => {
-    setUserDropdownOpen(!userDropdownOpen);
-  };
-
-  const handleLogoutConfirm = () => {
-    logout();
-    setLogoutConfirmOpen(false);
-    success('Successfully logged out!');
-    
-  };
-
-  const handleLogoutCancel = () => {
-    setLogoutConfirmOpen(false);
-  };
 
   return (
     <>
@@ -109,43 +85,7 @@ const Header = () => {
               )}
             </button>
             {user ? (
-              <div className='relative'>
-                <button 
-                  onClick={handleUserIconClick}
-                  className='group bg-primary rounded-full p-1 cursor-pointer hover:scale-110 transition-transform'
-                  title="User menu"
-                >
-                  <UserIcon className='w-6 h-6 text-primary group-hover:scale-110 transition-transform' />
-                </button>
-                {userDropdownOpen && (
-                  <div 
-                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-                    onMouseEnter={() => {
-                      if (hoverTimeout) {
-                        clearTimeout(hoverTimeout);
-                      }
-                    }}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div className="p-3 border-b border-gray-200">
-                      <p className="font-semibold font-poppins text-gray-800 text-sm">{user?.email}</p>
-                      
-                    </div>
-                    <button
-                      onClick={() => {
-                        setLogoutConfirmOpen(true);
-                        setUserDropdownOpen(false);
-                      }}
-                      aria-label="Logout from account"
-                      className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      
-                      <LogOutIcon className='w-4 h-4' />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+              <ProfileIcon />
             ) : (
               <button 
                 onClick={() => setAuthModalOpen(true)}
@@ -165,9 +105,14 @@ const Header = () => {
             </span>
               </button>
             )}
-            <button className='relative cursor-pointer hover:scale-110 transition-transform'>
+            <button 
+              onClick={() => router.push('/cart')}
+              className='relative cursor-pointer hover:scale-110 transition-transform'
+            >
               <CartIcon className='w-8 h-8 text-primary group-hover:scale-110 transition-transform' />
-              <span className='absolute font-poppins font-semibold top-0 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center'>3</span>
+              <span className='absolute font-poppins font-semibold top-0 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                {getCartCount()}
+              </span>
             </button>
           </div>
 
@@ -184,42 +129,7 @@ const Header = () => {
               )}
             </button>
             {user ? (
-              <div className='relative'>
-                <button 
-                  onClick={handleUserIconClick}
-                  className='group bg-primary rounded-full p-1 cursor-pointer hover:scale-110 transition-transform'
-                  title="User menu"
-                >
-                  <UserIcon className='w-6 h-6 text-primary group-hover:scale-110 transition-transform' />
-                </button>
-                {userDropdownOpen && (
-                  <div 
-                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-                    onMouseEnter={() => {
-                      if (hoverTimeout) {
-                        clearTimeout(hoverTimeout);
-                      }
-                    }}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div className="p-3 border-b border-gray-200">
-                      <p className="font-semibold text-gray-800 text-sm">{user?.email}</p>
-                      <p className="text-xs text-gray-500">Role: {user?.role}</p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setLogoutConfirmOpen(true);
-                        setUserDropdownOpen(false);
-                      }}
-                      aria-label="Logout from account"
-                      className="w-full flex cursor-pointer items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <LogOutIcon className='w-4 h-4' />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+              <ProfileIcon />
             ) : (
               <button 
                 onClick={() => setAuthModalOpen(true)}
@@ -228,9 +138,14 @@ const Header = () => {
                 Login
               </button>
             )}
-            <button className='relative cursor-pointer hover:scale-110 transition-transform'>
+            <button 
+              onClick={() => router.push('/cart')}
+              className='relative cursor-pointer hover:scale-110 transition-transform'
+            >
               <CartIcon className='w-8 h-8 text-primary group-hover:scale-110 transition-transform' />
-              <span className='absolute font-poppins font-semibold top-0 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center'>3</span>
+              <span className='absolute font-poppins font-semibold top-0 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+                {getCartCount()}
+              </span>
             </button>
           </div>
         </div>
@@ -300,46 +215,6 @@ const Header = () => {
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)} 
       />
-
-      {/* Logout Confirmation Modal */}
-      {logoutConfirmOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-(--bg-secondary) relative text-(--text-primary) rounded-[16px] shadow-xl w-full max-w-md font-poppins">
-            {/* Header */}
-            
-
-            {/* Content */}
-            <div className="p-6">
-              <div className="flex justify-center items-center mb-8">
-                <div className={`flex justify-center items-center w-24 h-24 rounded-full ${theme === 'dark' ? 'text-white bg-[#AA1F1F]' : 'text-red-700 bg-red-100'}`}>
-                  <LogOutIcon className="w-16 h-16" />
-                </div>
-              </div>
-              <h2 className='font-bold mb-2'>Log Out</h2>
-              <p className=" text-(--text-secondary) font-poppins mb-6">
-                Are you sure you want to log out ? 
-              </p>
-
-              {/* Buttons */}
-              <div className="flex gap-3">
-                <button
-                  onClick={handleLogoutCancel}
-                  className="flex w-full border items-center justify-center border-(--border-color) text-(--text-secondary) py-2 px-4 rounded-md font-medium font-poppins hover:bg-(--bg-secondary) transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleLogoutConfirm}
-                  className="flex w-full items-center gap-5  bg-[#AA1F1F] text-white py-2 px-4 rounded-md font-medium font-poppins hover:bg-red-600 transition-colors cursor-pointer"
-                >
-                   <LogOutIcon className="w-7 h-7" />
-                   <p>Yes, Log Out</p>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }

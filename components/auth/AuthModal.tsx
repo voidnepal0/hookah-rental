@@ -5,8 +5,8 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useTheme } from '../../contexts/ThemeContext'
 import Image from 'next/image'
 import type { Login, Register } from '../../types/authTypes'
-import darkLogo from '@/public/logoDark.svg';
-import logo from '@/public/Logo.svg';
+import darkLogo from '@/public/layout/logoDark.svg';
+import logo from '@/public/layout/Logo.svg';
 import { useToast } from '../../hooks/useToast';
 
 interface AuthModalProps {

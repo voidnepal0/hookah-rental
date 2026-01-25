@@ -12,7 +12,7 @@ export default function AboutUs() {
     <section className="max-w-[2000px] mx-auto overflow-hidden lg:pt-[80px] pt-[40px] relative" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-primary)" }}>
       {/* Background decorative elements */}
       <div className="absolute -bottom-5 left-0 pointer-events-none z-0 ">
-                <Image src={theme === 'dark' ? '/blackHookah.svg' : '/whiteHookah.svg'} alt="Hookah" width={250} height={250} className="w-auto h-auto" />
+                <Image src={theme === 'dark' ? '/layout/blackHookah.svg' : '/layout/whiteHookah.svg'} alt="Hookah" width={250} height={250} className="w-auto h-auto" />
               </div>
 
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8 py-8 relative z-10">

@@ -32,7 +32,7 @@ export default function Hero() {
             {/* Yellow Blob Background */}
             <div className='absolute xl:-right-30 lg:-right-40 lg:top-20 w-[350px] h-[300px] md:w-[400px] md:h-[450px] lg:w-[850px] lg:h-[600px] '>
             <Image
-              src={theme === 'dark' ? '/frame.svg' : 'frameWhite.svg'}
+              src={theme === 'dark' ? '/home/frame.svg' : '/home/frameWhite.svg'}
               alt="Frame background"
               width={550}
               height={550}
@@ -45,7 +45,7 @@ export default function Hero() {
               {/* Girl Image */}
               <div className='absolute   inset-0 flex items-end justify-center'>
                 <Image 
-                  src="/girl.svg" 
+                  src="/home/girl.svg" 
                   alt="Person with hookah" 
                   width={700} 
                   height={700} 
@@ -57,7 +57,7 @@ export default function Hero() {
               {/* Smoke Image */}
               <div className='absolute xl:top-42 lg:top-45 md:top-35 xl:left-2 md:left-3 lg:-left-2 top-23   w-[100px] md:w-[130px] lg:w-[200px] xl:w-[220px] z-20'>
                 <Image 
-                  src="/smoke.svg" 
+                  src="/home/smoke.svg" 
                   alt="Smoke effect" 
                   width={220} 
                   height={150} 

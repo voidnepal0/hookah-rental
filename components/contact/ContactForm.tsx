@@ -220,7 +220,7 @@ const ContactForm = () => {
       <div className="relative lg:pt-40 pt-90">
         <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
           <Image
-            src={theme === "dark" ? "/hookahBlack.svg" : "/hookah.svg"}
+            src={theme === "dark" ? "/layout/hookahBlack.svg" : "/layout/hookah.svg"}
             alt="smoke"
             width={250}
             height={250}
@@ -229,7 +229,7 @@ const ContactForm = () => {
         </div>
         <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
           <Image
-            src={theme === "dark" ? "/cloudBlack.svg" : "/cloud.svg"}
+            src={theme === "dark" ? "/layout/cloudBlack.svg" : "/layout/cloud.svg"}
             alt="smoke"
             width={250}
             height={250}

@@ -5,6 +5,7 @@ import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
 import QueryProvider from "../providers/QueryProvider";
 import { Toaster } from "react-hot-toast";
 
@@ -40,14 +41,15 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>
-              <Header />
-              {children}
-              <Footer />
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  style: {
-                    fontFamily: 'var(--font-poppins), sans-serif',
+              <CartProvider>
+                <Header />
+                {children}
+                <Footer />
+                <Toaster
+                  position="top-right"
+                  toastOptions={{
+                    style: {
+                      fontFamily: 'var(--font-poppins), sans-serif',
                     background: 'var(--bg-primary)',
                     color: 'var(--text-primary)',
                     border: '1px solid var(--border-color)',
@@ -77,6 +79,7 @@ export default function RootLayout({
                   },
                 }}
               />
+              </CartProvider>
             </AuthProvider>
           </QueryProvider>
         </ThemeProvider>

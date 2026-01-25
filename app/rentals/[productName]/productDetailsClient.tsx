@@ -5,10 +5,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, ShoppingCart, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useGetProducts } from '@/services';
 import { Product } from '@/types/productTypes';
 import { API_URL } from '@/services/axiosInstance';
 import ProductDetailsSkeleton from '@/components/Skeltons/ProductDetailsSkeleton';
+import AuthModal from '@/components/auth/AuthModal';
 
 interface ProductDetailsClientProps {
   initialProduct: Product | null;
@@ -16,9 +19,12 @@ interface ProductDetailsClientProps {
 
 const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => {
   const { theme } = useTheme();
+  const { addToCart } = useCart();
+  const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedDuration, setSelectedDuration] = useState<'hour' | 'day'>('hour');
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Use the initial product from server-side props
   const [currentProduct, setCurrentProduct] = useState<Product | null>(initialProduct);
@@ -54,6 +60,21 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   })();
 
   // Handle add to cart
+  const handleAddToCart = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    if (!currentProduct) return;
+
+    const cartItem = {
+      productId: currentProduct.name, // Store name instead of ID for API lookup
+      duration: selectedDuration
+    };
+
+    addToCart(cartItem);
+  };
 
 
   // Create array of images (main image + secondary images)
@@ -284,7 +305,10 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
             </div>
 
             {/* Add to Cart Button */}
-            <button className="w-full py-4 cursor-pointer bg-primary text-black rounded-full font-bold text-sm uppercase flex items-center justify-center gap-2 hover:bg-yellow-400 transition-colors">
+            <button 
+              onClick={handleAddToCart}
+              className="w-full py-4 cursor-pointer bg-primary text-black rounded-full font-bold text-sm uppercase flex items-center justify-center gap-2 hover:bg-yellow-400 transition-colors"
+            >
               <ShoppingCart size={20} />
               Add to Cart
             </button>
@@ -378,15 +402,23 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
             </button>
           </div>
         </div>
+     
       </div>
-       <div className='relative lg:pt-40 pt-60'>
+        <div className='relative lg:pt-40 pt-60'>
                    <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-                                <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+                                <Image src={theme === 'dark' ? '/layout/hookahBlack.svg' : '/layout/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
                               </div>
                                <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
-                                <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
+                                <Image src={theme === 'dark' ? '/layout/cloudBlack.svg' : '/layout/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
                               </div>
                   </div>
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)} 
+        />
+      )}
     </section>
   );
 };

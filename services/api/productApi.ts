@@ -10,8 +10,31 @@ import type { Product, ProductResponse, ProductFilters } from "@/types/productTy
 export async function getProductByIdOrName(identifier: string): Promise<Product | null> {
   if (!identifier) return null;
   
+  // Check if identifier looks like a UUID (has dashes and proper length)
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
+  
+  if (!isUuid) {
+    // Skip direct API call for names and go straight to fallback
+    try {
+      const allProductsResponse = await apiClient.get(`/website/${SHOP_ID}/products?limit=100`);
+      const data = allProductsResponse.data;
+      const normalizedIdentifier = identifier?.toString().toLowerCase() || '';
+      
+      return data.data?.find((product: Product) => 
+        product.id === identifier || 
+        (product.name && (
+          product.name.toLowerCase() === normalizedIdentifier ||
+          product.name.toLowerCase().replace(/\s+/g, '-') === normalizedIdentifier
+        ))
+      ) || null;
+    } catch (fallbackError) {
+      console.error('Error fetching product:', fallbackError);
+      return null;
+    }
+  }
+  
   try {
-    // First try to fetch by ID
+    // First try to fetch by ID (only for UUIDs)
     const response = await apiClient.get(`/website/${SHOP_ID}/products/${identifier}`);
     return response.data;
     

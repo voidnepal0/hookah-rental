@@ -8,10 +8,10 @@ const WhoAreWe = () => {
   return (
     <section className="relative bg-(--bg-secondary) overflow-hidden text-(--text-primary) py-10 lg:pt-[160px] pt-[80px] max-w-[2000px] mx-auto">
           <div className="absolute hidden lg:block sm:top-20 lg:top-0   -right-10 pointer-events-none z-0">
-                   <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
+                   <Image src={theme === 'dark' ? '/layout/blackSmoke.svg' : '/layout/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
                  </div>
                  <div className="absolute block lg:hidden  bottom-0  -right-10 pointer-events-none z-0">
-                   <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
+                   <Image src={theme === 'dark' ? '/layout/blackSmoke.svg' : '/layout/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
                  </div>
       <div className="max-w-[1440px] z-10 flex flex-col-reverse lg:flex-row items-start justify-between gap-10 mx-auto px-4 lg:px-8">
         <div className="w-full lg:w-1/2 z-10">

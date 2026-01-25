@@ -61,7 +61,7 @@ const WhySmoke = () => {
 
         
         <div className="absolute  -bottom-15  -right-15 pointer-events-none z-0">
-          <Image src={theme === 'dark' ? '/whySmokeBlack.svg' : '/whySmoke.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+          <Image src={theme === 'dark' ? '/layout/whySmokeBlack.svg' : '/layout/whySmoke.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
         </div>
       </div>
     </section>

@@ -21,7 +21,7 @@ const HowItWorks = () => {
         
         {/* Smoke frames at top left */}
         <div className="absolute sm:top-20 top-0  left-0 pointer-events-none z-0">
-          <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+          <Image src={theme === 'dark' ? '/layout/blackSmoke.svg' : '/layout/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
         </div>
        
 
@@ -71,7 +71,7 @@ const HowItWorks = () => {
 
         {/* Hookah Icon at bottom right */}
         <div className="absolute -bottom-10 -right-7 pointer-events-none z-0 ">
-          <Image src={theme === 'dark' ? '/blackHookah.svg' : '/whiteHookah.svg'} alt="Hookah" width={250} height={250} className="w-auto h-auto" />
+          <Image src={theme === 'dark' ? '/layout/blackHookah.svg' : '/layout/whiteHookah.svg'} alt="Hookah" width={250} height={250} className="w-auto h-auto" />
         </div>
       </div>
     </section>

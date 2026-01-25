@@ -23,7 +23,7 @@ const ClinetSay = () => {
   return (
     <section className="relative max-w-[2000px] mx-auto bg-(--bg-secondary) text-(--text-primary) py-20 overflow-hidden">
        <div className="absolute   -bottom-10  -right-5 pointer-events-none z-0">
-                         <Image src={theme === 'dark' ? '/blackSmoke.svg' : '/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
+                         <Image src={theme === 'dark' ? '/layout/blackSmoke.svg' : '/layout/smoke3.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto rotate-x-180" />
                        </div>
       <div className="max-w-[1440px] h-[700px] mx-auto px-4">
         {/* Header */}

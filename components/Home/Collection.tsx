@@ -33,7 +33,7 @@ const Collection = () => {
           </Link>
 
           <div className="absolute lg:top-16 top-11 right-0 pointer-events-none ">
-            <Image src={theme === 'dark' ? '/smoke2.svg' : '/whitesmoke.svg'} alt="smoke" width={260} height={260} className="w-auto h-auto" />
+            <Image src={theme === 'dark' ? '/layout/smoke2.svg' : '/layout/whitesmoke.svg'} alt="smoke" width={260} height={260} className="w-auto h-auto" />
            
           </div>
         </header>

@@ -5,8 +5,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { socialLinks } from "../../constants/footerConstants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import darkLogo from '@/public/logoDark.svg';
-import logo from '@/public/Logo.svg';
+import darkLogo from '@/public/layout/logoDark.svg';
+import logo from '@/public/layout/Logo.svg';
 const Footer = () => {
   const { theme } = useTheme();
   const router = useRouter();
@@ -90,7 +90,7 @@ const Footer = () => {
             <p>Website by</p>
             <Link href={'https://voidnepal.com.np/'} target="_blank" rel="noopener noreferrer">
             <Image 
-              src={`${theme === 'dark' ? '/logoWhite.svg' : '/logoBlack.svg'}`} 
+              src={`${theme === 'dark' ? '/layout/logoWhite.svg' : '/layout/logoBlack.svg'}`} 
               alt="Logo" 
               width={50} 
               height={50} 
@@ -111,7 +111,7 @@ const Footer = () => {
             <p>Website by</p> 
             <Link href={'https://voidnepal.com.np/'} target="_blank" rel="noopener noreferrer">
             <Image 
-              src={`${theme === 'dark' ? '/logoWhite.svg' : '/logoBlack.svg'}`} 
+              src={`${theme === 'dark' ? '/layout/logoWhite.svg' : '/layout/logoBlack.svg'}`} 
               alt="Logo" 
               width={50} 
               height={50} 

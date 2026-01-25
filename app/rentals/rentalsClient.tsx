@@ -416,10 +416,10 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
         </div>
         <div className='relative pt-60'>
          <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
-                      <Image src={theme === 'dark' ? '/hookahBlack.svg' : '/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
+                      <Image src={theme === 'dark' ? '/layout/hookahBlack.svg' : '/layout/hookah.svg'} alt="smoke" width={250} height={250} className="w-auto h-auto" />
                     </div>
                      <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
-                      <Image src={theme === 'dark' ? '/cloudBlack.svg' : '/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
+                      <Image src={theme === 'dark' ? '/layout/cloudBlack.svg' : '/layout/cloud.svg'} alt="smoke" width={250} height={250} className="lg:w-auto lg:h-auto" />
                     </div>
         </div>
       </section>
