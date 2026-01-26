@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useCart } from "@/contexts/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -695,4 +695,13 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+// Wrapper component to handle Suspense boundary
+const CheckoutPageWrapper = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckoutPage />
+    </Suspense>
+  );
+};
+
+export default CheckoutPageWrapper;
