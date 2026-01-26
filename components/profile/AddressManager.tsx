@@ -145,19 +145,14 @@ const AddressForm: React.FC<AddressFormProps> = ({
     <div className="flex gap-3 mt-6">
       <button
         onClick={() => onSave(addressId)}
-        className="flex bg-primary items-center gap-2 px-6 py-2 rounded-xl font-semibold transition-all duration-300 cursor-pointer "
-       
+        className="cursor-pointer bg-green-500 text-white px-4 py-2.5 inline-flex items-center justify-center gap-2 font-poppins rounded-[8px] transition-all duration-150 ease-out shadow-[0px_4px_0_#16a34a] hover:shadow-[0_6px_0_#16a34a] hover:-translate-y-[2px] active:shadow-[0_0px_0_#16a34a] active:translate-y-[2px]"
       >
         <Save size={18} />
         Save Address
       </button>
       <button
         onClick={onCancel}
-        className="flex items-center gap-2 px-6  rounded-xl font-semibold transition-all duration-300 cursor-pointer border-2 "
-        style={{
-          borderColor: "var(--border-color)",
-          color: "var(--text-primary)",
-        }}
+        className="cursor-pointer bg-(--bg-secondary) text-(--text-secondary) px-4 py-2.5 inline-flex items-center justify-center gap-2 font-poppins rounded-[8px] transition-all duration-150 ease-out shadow-[0px_4px_0_#9ca3af] hover:shadow-[0_6px_0_#9ca3af] hover:-translate-y-[2px] active:shadow-[0_0px_0_#9ca3af] active:translate-y-[2px]"
       >
         <X size={18} />
         Cancel
@@ -310,8 +305,7 @@ const AddressManager = () => {
         </div>
         <button
           onClick={handleAddNew}
-          className="flex bg-primary items-center max-w-[210px] gap-2 px-4 py-2   rounded-xl font-semibold transition-all duration-300 cursor-pointer  shadow-sm"
-          
+          className="cursor-pointer bg-(--bg-secondary) text-(--text-secondary) px-4 py-2.5 inline-flex items-center justify-center gap-2 font-poppins rounded-[8px] transition-all duration-150 ease-out shadow-[0px_4px_0_#9ca3af] hover:shadow-[0_6px_0_#9ca3af] hover:-translate-y-[2px] active:shadow-[0_0px_0_#9ca3af] active:translate-y-[2px]"
         >
           <Plus size={20} />
           Add New Address
@@ -359,11 +353,7 @@ const AddressManager = () => {
               </p>
               <button
                 onClick={handleAddNew}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer hover:scale-105"
-                style={{
-                  backgroundColor: "var(--primary)",
-                  color: "var(--text-primary)",
-                }}
+                className="cursor-pointer bg-(--bg-secondary) text-(--text-secondary) px-4 py-2.5 inline-flex items-center justify-center gap-2 font-poppins rounded-[8px] transition-all duration-150 ease-out shadow-[0px_4px_0_#9ca3af] hover:shadow-[0_6px_0_#9ca3af] hover:-translate-y-[2px] active:shadow-[0_0px_0_#9ca3af] active:translate-y-[2px]"
               >
                 <Plus size={18} />
                 Add Your First Address

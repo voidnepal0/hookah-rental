@@ -98,7 +98,7 @@ const CateringClient = () => {
               </div>
               <div className="flex  gap-2">
                 <MailIcon className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-black'}`} />
-                <p className="text-[16px]">baghbhairabbhs@gmail.com</p>
+                <p className="text-[16px]">hookahrental@gmail.com</p>
               </div>
             </div>
           

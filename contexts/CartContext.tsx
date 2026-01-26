@@ -7,7 +7,8 @@ import toast from 'react-hot-toast'
 interface CartItem {
   productId: string
   quantity: number
-  duration: 'hour' | 'day'
+  duration: 'day'
+  addons: string[]
 }
 
 interface CartContextType {

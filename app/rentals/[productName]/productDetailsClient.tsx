@@ -8,13 +8,34 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGetProducts } from '@/services';
-import { Product } from '@/types/productTypes';
+import { Product, ProductAddon } from '@/types/productTypes';
 import { API_URL } from '@/services/axiosInstance';
 import ProductDetailsSkeleton from '@/components/Skeltons/ProductDetailsSkeleton';
 import AuthModal from '@/components/auth/AuthModal';
 
 interface ProductDetailsClientProps {
-  initialProduct: Product | null;
+  initialProduct: {
+    id: string;
+    name: string;
+    description: string;
+    sellingPrice: number;
+    brand: {
+      name: string;
+    } | null;
+    shopProductCategory: {
+      name: string;
+    } | null;
+    variants: {
+      sellingPrice: number;
+    }[];
+    addons: {
+      id: string;
+      name: string;
+      additionalPrice: number;
+    }[];
+    imageUrl: string;
+    secondaryImageUrls: string[];
+  } | null;
 }
 
 const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => {
@@ -23,11 +44,12 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
   const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [selectedDuration, setSelectedDuration] = useState<'hour' | 'day'>('hour');
+  const [selectedDuration,] = useState<'day'>('day');
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Use the initial product from server-side props
-  const [currentProduct, setCurrentProduct] = useState<Product | null>(initialProduct);
+  const [currentProduct, setCurrentProduct] = useState(initialProduct);
   
   // Fallback client-side fetch if initialProduct is not available
   useEffect(() => {
@@ -69,13 +91,22 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
     if (!currentProduct) return;
 
     const cartItem = {
-      productId: currentProduct.name, // Store name instead of ID for API lookup
-      duration: selectedDuration
+      productId: currentProduct.id, // Use the UUID instead of name
+      duration: selectedDuration,
+      addons: selectedAddons
     };
 
     addToCart(cartItem);
   };
 
+  // Toggle addon selection
+  const toggleAddon = (addonId: string) => {
+    setSelectedAddons(prev => 
+      prev.includes(addonId) 
+        ? prev.filter(id => id !== addonId)
+        : [...prev, addonId]
+    );
+  };
 
   // Create array of images (main image + secondary images)
   const productImages = (() => {
@@ -96,27 +127,29 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
 
   // Get pricing from variants or fallback to selling price
   const getPrice = () => {
-    if (!currentProduct) return { hourly: 0, daily: 0 };
+    if (!currentProduct) return { daily: 0 };
     
     if (currentProduct.variants && currentProduct.variants.length > 0) {
-      const variant = currentProduct.variants[0] as { sellingPrice?: number };
+      const variant = currentProduct.variants[0];
       return {
-        hourly: variant.sellingPrice || 0,
-        daily: (variant.sellingPrice || 0) * 10 // Daily rate as 10x hourly
+        daily: variant.sellingPrice || 0
       };
     }
     
     return {
-      hourly: currentProduct.sellingPrice || 0,
-      daily: (currentProduct.sellingPrice || 0) * 10 // Daily rate as 10x hourly
+      daily: currentProduct.sellingPrice || 0
     };
   };
 
-  const { hourly, daily } = getPrice();
+  const { daily } = getPrice();
   
-  const totalPrice = selectedDuration === 'hour' 
-    ? hourly * quantity 
-    : daily * quantity;
+  // Calculate addons total
+  const addonsTotal = selectedAddons.reduce((total: number, addonId: string) => {
+    const addon = currentProduct?.addons?.find((a: ProductAddon) => a.id === addonId);
+    return total + (Number(addon?.additionalPrice) || 0);
+  }, 0);
+  
+  const totalPrice = (daily + addonsTotal) * quantity;
 
   const productDisplayName = currentProduct?.name || 'Unknown Product';
 
@@ -229,8 +262,8 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
               {/* Pricing Section */}
               <div className="flex items-center justify-between">
                
-                  <div className="text-sm ">Per Hour</div>
-                  <div className="text-xl text-primary font-bold">Rs {hourly}</div>
+                  <div className="text-sm ">Per Day</div>
+                  <div className="text-xl text-primary font-bold">Rs {daily}</div>
                 
                
               </div>
@@ -255,31 +288,36 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
               )} */}
             </div>
 
-            {/* Duration Selection */}
-            <div className="space-y-2">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="duration"
-                  value="hour"
-                  checked={selectedDuration === 'hour'}
-                  onChange={() => setSelectedDuration('hour')}
-                  className="w-4 h-4 accent-primary"
-                />
-                <span className="text-sm">Per Hour</span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="radio"
-                  name="duration"
-                  value="day"
-                  checked={selectedDuration === 'day'}
-                  onChange={() => setSelectedDuration('day')}
-                  className="w-4 h-4 accent-primary"
-                />
-                <span className="text-sm">Per Day</span>
-              </label>
-            </div>
+            {/* Addons Section */}
+            {currentProduct.addons && currentProduct.addons.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-medium text-lg">Available Addons</h3>
+                <div className="space-y-2">
+                  {currentProduct.addons.map((addon: ProductAddon) => (
+                    <div 
+                      key={addon.id}
+                      onClick={() => toggleAddon(addon.id)}
+                      className="flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                      style={{ borderColor: "var(--border-primary)" }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                          selectedAddons.includes(addon.id) 
+                            ? 'bg-primary border-primary' 
+                            : 'border-gray-300'
+                        }`}>
+                          {selectedAddons.includes(addon.id) && (
+                            <span className="text-black text-xs">✓</span>
+                          )}
+                        </div>
+                        <span className="font-medium">{addon.name}</span>
+                      </div>
+                      <span className="text-primary font-bold">Rs {addon.additionalPrice}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Quantity Selector */}
             <div className="flex items-center border-2 border-primary max-w-[180px] py-1 rounded-full justify-around w-full gap-3">
@@ -373,10 +411,10 @@ const ProductDetailsClient = ({ initialProduct }: ProductDetailsClientProps) => 
                     <div className="flex items-center mt-1 justify-between">
                       <div>
                         <span className="font-poppins text-sm opacity-70">
-                          Per hour
+                          Per day
                         </span>
                         <div className="text-[20px]">
-                          Rs {prod.variants && prod.variants.length > 0 ? (prod.variants[0] as { sellingPrice?: number }).sellingPrice : prod.sellingPrice}
+                          Rs {((prod.variants?.[0] as { sellingPrice?: number })?.sellingPrice || prod.sellingPrice)}
                         </div>
                       </div>
                     </div>

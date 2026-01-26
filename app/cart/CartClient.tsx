@@ -64,9 +64,9 @@ const CartClient = () => {
     const cartItem = cartItems.find(item => item.productId === productId);
     if (!cartItem) return total;
     
-    const price = cartItem.duration === 'hour' 
+    const price = cartItem.duration === 'day' 
       ? (product.variants?.[0]?.sellingPrice || product.sellingPrice || 0)
-      : ((product.variants?.[0]?.sellingPrice || product.sellingPrice || 0) * 10);
+      : ((product.variants?.[0]?.sellingPrice || product.sellingPrice || 0));
     
     return total + (price * cartItem.quantity);
   }, 0);
@@ -157,9 +157,9 @@ const CartClient = () => {
                     const product = productDetails[item.productId];
                     if (!product) return null;
                     
-                    const price = item.duration === 'hour' 
+                    const price = item.duration === 'day' 
                       ? (product.variants?.[0]?.sellingPrice || product.sellingPrice || 0)
-                      : ((product.variants?.[0]?.sellingPrice || product.sellingPrice || 0) * 10);
+                      : ((product.variants?.[0]?.sellingPrice || product.sellingPrice || 0) );
                     
                     return (
                       <div key={item.productId} className={`grid grid-cols-12 gap-4 py-4 border-b ${theme === 'dark' ? 'border-black' : 'border-gray-200'} items-center`}>
@@ -188,7 +188,7 @@ const CartClient = () => {
                         </div>
                         <div className="col-span-3 text-right flex items-center justify-between">
                           <span className="font-medium">
-                            Rs {price}{item.duration === 'hour' ? '/hour' : '/day'}
+                            Rs {price}{item.duration === 'day' ? '/day' : ''}
                           </span>
                           <button
                             onClick={() => removeFromCart(item.productId)}
@@ -229,7 +229,7 @@ const CartClient = () => {
             {cartItems.length > 0 && (
               <div className="lg:w-116">
                 <div 
-                  className="lg:p-6 rounded-lg"
+                  className="lg:px-6 rounded-lg"
                   style={{
                     backgroundColor: "var(--bg-secondary)",
                    
@@ -284,7 +284,8 @@ const CartClient = () => {
                     </div>
                   </div>
 
-                  <button
+                  <Link
+                    href={`/checkout?voucher=${voucherApplied ? voucherAmount : 0}`}
                     className="w-full text-black cursor-pointer py-3 bg-primary rounded-[100px] font-semibold transition-colors flex items-center justify-center gap-2"
                     
                     onMouseEnter={(e) => {
@@ -294,9 +295,9 @@ const CartClient = () => {
                       e.currentTarget.style.opacity = "1";
                     }}
                   >
-                    Next
+                    Proceed to Checkout
                 <ArrowRightIcon className='w-5 h-5' />
-                  </button>
+                  </Link>
                 </div>
               </div>
             )}

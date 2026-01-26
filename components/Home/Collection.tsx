@@ -83,7 +83,7 @@ const Collection = () => {
 
                 <div className="flex justify-between">
              
-                    <p className="text-[14px] ">Per Hour</p>
+                    <p className="text-[14px] ">Per Day</p>
                     <p className="text-[16px] text-primary font-semibold">
                       Rs {item.price[0].amount}
                     </p>

@@ -336,7 +336,7 @@ const RentalsPage: React.FC<RentalsClientProps> = ({ initialProducts }) => {
                         <div className="flex items-center  justify-between">
                           <div>
                             <span className="font-poppins text-sm opacity-70">
-                              Per hour
+                              Per Day
                             </span>
                             <div className="text-[24px] text-primary">
                               Rs {prod.variants && prod.variants.length > 0 ? (prod.variants[0].sellingPrice as number) : prod.sellingPrice}

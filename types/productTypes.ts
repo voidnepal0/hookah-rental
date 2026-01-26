@@ -22,6 +22,26 @@ export interface ProductBrand {
   updatedAt: string | null;
 }
 
+export interface ProductAddon {
+  id: string;
+  name: string;
+  additionalPrice: number;
+}
+
+export interface ProductVariant {
+  id: string;
+  name: string;
+  description: string | null;
+  costPrice: number;
+  sellingPrice: number;
+  primaryUnit: string | null;
+  secondaryUnit: string | null;
+  conversionRate: number | null;
+  secondaryUnitPrice: number | null;
+  current_stock_quantity: number;
+  minimum_stock_quantity: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -45,8 +65,8 @@ export interface Product {
   current_stock_quantity: number;
   minimum_stock_quantity: number;
   isVariant: boolean;
-  addons: Record<string, unknown>[];
-  variants: Record<string, unknown>[];
+  addons: ProductAddon[];
+  variants: ProductVariant[];
 }
 
 export interface ProductResponse {

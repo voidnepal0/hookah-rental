@@ -4,6 +4,7 @@ import Image from "next/image";
 import { HookahIcon } from "../icons/HookahIcon";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
+import { SmokeIcon } from "../icons/Smoke";
 
 export default function Hero() {
   const {theme} = useTheme()
@@ -56,13 +57,14 @@ export default function Hero() {
               
               {/* Smoke Image */}
               <div className='absolute xl:top-42 lg:top-45 md:top-35 xl:left-2 md:left-3 lg:-left-2 top-23   w-[100px] md:w-[130px] lg:w-[200px] xl:w-[220px] z-20'>
-                <Image 
+                {/* <Image 
                   src="/home/smoke.svg" 
                   alt="Smoke effect" 
                   width={220} 
                   height={150} 
                   className='w-full h-auto object-contain'
-                />
+                /> */}
+                <SmokeIcon />
               </div>
             </div>
           </div>
