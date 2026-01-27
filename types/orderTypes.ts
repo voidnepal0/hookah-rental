@@ -154,7 +154,7 @@ export interface CheckoutFormData {
   notes?: string;
   productRequests: ProductRequest[];
   serviceRequests?: ServiceRequest[];
-  purchaseMethod: "esewa" | "khalti" | "whatsapp";
+  purchaseMethod: string;
   agreeToTerms: boolean;
 }
 

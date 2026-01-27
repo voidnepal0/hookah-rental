@@ -11,10 +11,11 @@ import { getProductByIdOrName } from "@/services/api/productApi";
 import { getDeliveryAddresses } from "@/services/api/addressApi";
 import { CreateOrderRequest, CheckoutFormData, PaymentDistribution } from "@/types/orderTypes";
 import { DeliveryAddress } from "@/types/addressTypes";
+import { Payment } from "@/types/paymentTypes";
 import { useAuth } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
-import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import Image from "next/image";
+import { getPaymentMethod } from "@/services";
 
 // Define product details interface
 interface ProductDetails {
@@ -43,7 +44,7 @@ const CheckoutPage = () => {
   const [deliveryAddresses, setDeliveryAddresses] = useState<DeliveryAddress[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const voucherAmount = Number(searchParams.get('voucher')) || 0;
-
+  const [paymentMethods, setPaymentMethods] = useState<Payment[]>([]);
   // Form state
   const [formData, setFormData] = useState<CheckoutFormData>({
     orderType: "delivery",
@@ -62,7 +63,7 @@ const CheckoutPage = () => {
         notes: "",
       },
     ],
-    purchaseMethod: "esewa",
+    purchaseMethod: "",
     agreeToTerms: false,
   });
 
@@ -121,6 +122,21 @@ const CheckoutPage = () => {
 
     fetchProductDetails();
   }, [cartItems]);
+
+  // Fetch payment methods
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const methods = await getPaymentMethod();
+        setPaymentMethods(methods);
+        console.log('Payment methods:', methods);
+      } catch (error) {
+        console.error('Error fetching payment methods:', error);
+      }
+    };
+
+    fetchPaymentMethods();
+  }, []);
 
   // Fetch delivery addresses and populate form with user data
   useEffect(() => {
@@ -185,6 +201,11 @@ const CheckoutPage = () => {
       errors.push("Address is required");
     }
 
+    // Payment method validation
+    if (!formData.purchaseMethod.trim()) {
+      errors.push("Please select a payment method");
+    }
+
     if (errors.length > 0) {
       toast.error(errors[0]); // Show first error
       return false;
@@ -221,20 +242,12 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Create payment distribution based on purchase method
+      // Create payment distribution based on selected payment method
       const paymentDistributions: PaymentDistribution[] = [];
       
-      // Map purchase method to payment mode ID (you'll need to configure these)
-      const paymentModeMap: Record<string, string> = {
-        "esewa": "6a20649e-ee16-4969-b71d-87d0077084ef",
-        "khalti": "another-khalti-payment-mode-id", // Replace with actual ID
-        "whatsapp": "another-whatsapp-payment-mode-id" // Replace with actual ID
-      };
-
-      const paymentModeId = paymentModeMap[formData.purchaseMethod];
-      if (paymentModeId) {
+      if (formData.purchaseMethod) {
         paymentDistributions.push({
-          paymentModeId,
+          paymentModeId: formData.purchaseMethod,
           amount: totalAmount - voucherAmount,
           status: "pending"
         });
@@ -569,64 +582,83 @@ const CheckoutPage = () => {
                 <div className="mb-6">
                   <h3 className="font-semibold mb-4">Purchase Method</h3>
                   <div className="grid grid-cols-1 gap-4">
-                    {[
-                      { 
-                        value: "esewa", 
-                        
-                        icon: "/payment/esewa.svg",
-                        alt: "eSewa Payment"
-                      },
-                      { 
-                        value: "khalti", 
-                       
-                        icon: "/payment/khalti.svg",
-                        alt: "Khalti Payment"
-                      },
-                      { 
-                        value: "whatsapp", 
-                        label: "Whatsapp",
-                        icon: <WhatsAppIcon className="w-6 h-6" />,
-                        alt: "WhatsApp Order"
-                      },
-                    ].map((method) => (
-                      <label
-                        key={method.value}
-                        className={`flex items-center border-(--border-color) p-4 rounded-lg border-2 cursor-pointer transition-colors ${
-                          formData.purchaseMethod === method.value 
-                          
-                        }`}
-                      >
-                        <div className="relative flex items-center justify-center w-7 h-7">
-                          <input
-                            type="radio"
-                            name="purchaseMethod"
-                            value={method.value}
-                            checked={formData.purchaseMethod === method.value}
-                            onChange={handleInputChange}
-                            className="h-7 w-7 appearance-none rounded-full border-2 border-primary bg-transparent absolute"
-                            
-                          />
-                          {formData.purchaseMethod === method.value && (
-                            <div className="w-4 h-4 rounded-full bg-primary z-10"></div>
-                          )}
-                        </div>
-                        {typeof method.icon === 'string' ? (
-                          <div className="relative h-6 w-15 ml-4">
-                            <Image 
-                              src={method.icon}
-                              alt={method.alt}
-                              fill
-                              className="object-contain"
+                    {paymentMethods.map((method) => {
+                      // Map payment method names to display info
+                      const getMethodInfo = (name: string) => {
+                        switch (name.toLowerCase()) {
+                          case 'esewa':
+                            return {
+                              label: 'eSewa',
+                              icon: "/payment/esewa.svg",
+                              alt: "eSewa Payment"
+                            };
+                          case 'khalti':
+                            return {
+                              label: 'Khalti',
+                              icon: "/payment/khalti.svg", 
+                              alt: "Khalti Payment"
+                            };
+                          case 'cash':
+                            return {
+                              label: 'Cash on Delivery',
+                              icon: "/payment/cash.svg",
+                              alt: "Cash on Delivery"
+                            };
+                          case 'bank':
+                            return {
+                              label: 'Bank Transfer',
+                              icon: "/payment/bank.svg",
+                              alt: "Bank Transfer"
+                            };
+                          default:
+                            return {
+                              label: name,
+                              icon: "/payment/default.svg",
+                              alt: `${name} Payment`
+                            };
+                        }
+                      };
+
+                      const methodInfo = getMethodInfo(method.name);
+                      
+                      return (
+                        <label
+                          key={method.id}
+                          className={`flex items-center border-(--border-color) p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                            formData.purchaseMethod === method.id
+                          }`}
+                        >
+                          <div className="relative flex items-center justify-center w-7 h-7">
+                            <input
+                              type="radio"
+                              name="purchaseMethod"
+                              value={method.id}
+                              checked={formData.purchaseMethod === method.id}
+                              onChange={handleInputChange}
+                              className="h-7 w-7 appearance-none rounded-full border-2 border-primary bg-transparent absolute"
                             />
+                            {formData.purchaseMethod === method.id && (
+                              <div className="w-4 h-4 rounded-full bg-primary z-10"></div>
+                            )}
                           </div>
-                        ) : (
-                          <div className="ml-4">
-                            {method.icon}
-                          </div>
-                        )}
-                        <span className="ml-2 text-lg">{method.label}</span>
-                      </label>
-                    ))}
+                          {typeof methodInfo.icon === 'string' ? (
+                            <div className="relative h-6 w-15 ml-4">
+                              <Image 
+                                src={methodInfo.icon}
+                                alt={methodInfo.alt}
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                          ) : (
+                            <div className="ml-4">
+                              {methodInfo.icon}
+                            </div>
+                          )}
+                          <span className="ml-2 text-lg">{methodInfo.label}</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 
