@@ -24,6 +24,4 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 
-EXPOSE 5696
-
 CMD ["npm", "start"]
