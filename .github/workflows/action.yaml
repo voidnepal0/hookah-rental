@@ -5,14 +5,12 @@ on:
     branches: [main]
     paths:
       - "./**"
-      - ".github/workflows/action.yaml"
+      - ".github/workflows/action.yml"
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-frontend
-  NEXT_PUBLIC_SHOP_ID: 92e1ff9e-ed61-4033-9501-542084c9d468
-  NEXT_PUBLIC_API_URL: https://api.trackynn.com
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -25,6 +23,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          cat > .env << 'EOF'
+          ${{ secrets.ENV_PRODUCTION }}
+          EOF
+          cat >> .env << 'EOF'
+          ${{ vars.ENV_PRODUCTION }}
+          EOF
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -41,13 +48,10 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build & Push Frontend Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./
           file: ./Dockerfile
           push: true
-          build-args: |
-            NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL }} |
-            NEXT_PUBLIC_SHOP_ID=${{ env.NEXT_PUBLIC_SHOP_ID }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
