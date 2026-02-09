@@ -1,126 +1,126 @@
-"use client"
-import React, { useState, useEffect } from 'react'
-import { X } from 'lucide-react'
-import { useAuth } from '../../contexts/AuthContext'
-import { useTheme } from '../../contexts/ThemeContext'
-import Image from 'next/image'
-import type { Login, Register } from '../../types/authTypes'
-import darkLogo from '@/public/layout/logoDark.svg';
-import logo from '@/public/layout/Logo.svg';
-import { useToast } from '../../hooks/useToast';
+"use client";
+import React, { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
+import Image from "next/image";
+import type { Login, Register } from "../../types/authTypes";
+import darkLogo from "@/public/layout/logoDark.svg";
+import logo from "@/public/layout/Logo.svg";
+import { useToast } from "../../hooks/useToast";
 
 interface AuthModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [formData, setFormData] = useState<Login | Register>({
-    email: '',
-    password: '',
-    name: '',
-    role: 'user'
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const { theme } = useTheme()
-  const { login, register, error, clearError } = useAuth()
-  const { success, error: showError } = useToast()
+    email: "",
+    password: "",
+    name: "",
+    role: "CUSTOMER",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const { theme } = useTheme();
+  const { login, register, error, clearError } = useAuth();
+  const { success, error: showError } = useToast();
 
   useEffect(() => {
     if (error) {
-      showError(error)
-      clearError()
+      showError(error);
+      clearError();
     }
-  }, [error, showError, clearError])
+  }, [error, showError, clearError]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-    if (error) clearError()
-  }
+      [name]: value,
+    }));
+    if (error) clearError();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      if (activeTab === 'login') {
-        await login(formData as Login)
-        success('Successfully logged in!')
-        onClose()
+      if (activeTab === "login") {
+        await login(formData as Login);
+        success("Successfully logged in!");
+        onClose();
       } else {
-        await register(formData as Register)
-        success('Account created successfully!')
-        onClose()
+        await register(formData as Register);
+        success("Account created successfully!");
+        onClose();
       }
     } catch {
       // Error is handled by AuthContext and will be shown as toast
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const switchTab = (tab: 'login' | 'register') => {
-    setActiveTab(tab)
+  const switchTab = (tab: "login" | "register") => {
+    setActiveTab(tab);
     setFormData({
-      email: '',
-      password: '',
-      name: '',
-      role: 'user'
-    })
-    clearError()
-  }
+      email: "",
+      password: "",
+      name: "",
+      role: "user",
+    });
+    clearError();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-28 p-4 overflow-y-auto scrollbar-hide">
       <div className="bg-(--bg-primary) relative text-(--text-primary) rounded-lg shadow-xl w-full max-w-md font-poppins min-h-fit max-h-[90vh] overflow-y-auto">
         {/* Header with Logo */}
         <div className="flex flex-col items-center p-6 border-b border-(--border-color)">
-            <div>
-                <h2 className='font-poppins font-medium text-[28px] lg:text-[42px]'>Welcome to</h2>
-            </div>
+          <div>
+            <h2 className="font-poppins font-medium text-[28px] lg:text-[42px]">
+              Welcome to
+            </h2>
+          </div>
           <div className="mb-4">
-            <Image 
-              src={theme === 'dark' ? logo : darkLogo} 
-              alt="Logo" 
-              width={120} 
-              height={120} 
-              className='lg:w-120 lg:h-40 w-60 h-20' 
+            <Image
+              src={theme === "dark" ? logo : darkLogo}
+              alt="Logo"
+              width={120}
+              height={120}
+              className="lg:w-120 lg:h-40 w-60 h-20"
             />
           </div>
-        
-         
         </div>
- <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-1 cursor-pointer hover:bg-red-500/10 rounded-full transition-colors"
-          >
-            <X className="w-5 h-5 text-(--text-secondary) hover:text-red-500 transition-colors" />
-          </button>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1 cursor-pointer hover:bg-red-500/10 rounded-full transition-colors"
+        >
+          <X className="w-5 h-5 text-(--text-secondary) hover:text-red-500 transition-colors" />
+        </button>
         {/* Tabs */}
         <div className="flex border-b border-(--border-color)">
           <button
-            onClick={() => switchTab('login')}
+            onClick={() => switchTab("login")}
             className={`flex-1 py-3 cursor-pointer px-4 text-sm font-medium font-poppins transition-colors ${
-              activeTab === 'login'
-                ? 'text-primary border-2 border-primary bg-black'
-                : 'text-(--text-secondary) hover:text-(--text-primary)'
+              activeTab === "login"
+                ? "text-primary border-2 border-primary bg-black"
+                : "text-(--text-secondary) hover:text-(--text-primary)"
             }`}
           >
             Login
           </button>
           <button
-            onClick={() => switchTab('register')}
+            onClick={() => switchTab("register")}
             className={`flex-1 cursor-pointer py-3 px-4 text-sm font-medium font-poppins transition-colors ${
-              activeTab === 'register'
-                ? 'text-primary border-2 border-primary bg-black'
-                : 'text-(--text-secondary) hover:text-(--text-primary)'
+              activeTab === "register"
+                ? "text-primary border-2 border-primary bg-black"
+                : "text-(--text-secondary) hover:text-(--text-primary)"
             }`}
           >
             Register
@@ -129,10 +129,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6">
-
-          {activeTab === 'register' && (
+          {activeTab === "register" && (
             <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-(--text-primary) mb-1 font-poppins">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-(--text-primary) mb-1 font-poppins"
+              >
                 Full Name
               </label>
               <input
@@ -149,7 +151,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           )}
 
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-(--text-primary) mb-1 font-poppins">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-(--text-primary) mb-1 font-poppins"
+            >
               Email Address
             </label>
             <input
@@ -165,7 +170,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-(--text-primary) mb-1 font-poppins">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-(--text-primary) mb-1 font-poppins"
+            >
               Password
             </label>
             <input
@@ -187,14 +195,34 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           >
             {isLoading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
-                {activeTab === 'login' ? 'Signing in...' : 'Creating account...'}
+                {activeTab === "login"
+                  ? "Signing in..."
+                  : "Creating account..."}
               </span>
+            ) : activeTab === "login" ? (
+              "Sign In"
             ) : (
-              activeTab === 'login' ? 'Sign In' : 'Create Account'
+              "Create Account"
             )}
           </button>
         </form>
@@ -202,12 +230,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         {/* Footer */}
         <div className="px-6 py-4 bg-(--bg-secondary) border-t border-(--border-color) rounded-b-lg">
           <p className="text-sm text-(--text-secondary) text-center font-poppins">
-            {activeTab === 'login' ? (
+            {activeTab === "login" ? (
               <>
-                Don&apos;t have an account?{' '}
+                Don&apos;t have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => switchTab('register')}
+                  onClick={() => switchTab("register")}
                   className="text-primary cursor-pointer font-medium font-poppins hover:text-primary/80 transition-colors"
                 >
                   Sign up
@@ -215,10 +243,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </>
             ) : (
               <>
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={() => switchTab('login')}
+                  onClick={() => switchTab("login")}
                   className="text-primary font-medium font-poppins hover:text-primary/80 transition-colors"
                 >
                   Sign in
@@ -229,7 +257,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AuthModal
+export default AuthModal;
