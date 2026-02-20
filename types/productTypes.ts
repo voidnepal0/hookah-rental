@@ -56,14 +56,37 @@ export interface Product {
   shopproductsubcategoryId: string | null;
   isAvailable: boolean;
   showonCostumerMenu: boolean;
-  shopProductCategory: ShopProductCategory;
+  shopproductcategory: ShopProductCategory;
   imageUrl: string;
   secondaryImageUrls: string[];
   brand: ProductBrand;
-  shopProductSubCategory: null | Record<string, unknown>;
+  shopproductsubcategory: null | Record<string, unknown>;
   sku: string;
   current_stock_quantity: number;
   minimum_stock_quantity: number;
+  isVariant: boolean;
+  addons: ProductAddon[];
+  variants: ProductVariant[];
+}
+
+export interface Service {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  primaryUnit: string;
+  secondaryUnit: string;
+  conversionRate: number | null;
+  secondaryUnitPrice: number | null;
+  shopproductcategoryId: string;
+  shopproductsubcategoryId: string | null;
+  isAvailable: boolean;
+  showonCostumerMenu: boolean;
+  shopproductcategory: ShopProductCategory;
+  imageUrl: string;
+  secondaryImageUrls: string[];
+  shopproductsubcategory: null | Record<string, unknown>;
+  sku: string;
   isVariant: boolean;
   addons: ProductAddon[];
   variants: ProductVariant[];

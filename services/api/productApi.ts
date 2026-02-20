@@ -4,56 +4,76 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { apiClient, SHOP_ID } from "../axiosInstance";
-import type { Product, ProductResponse, ProductFilters } from "@/types/productTypes";
+import type {
+  Product,
+  ProductResponse,
+  ProductFilters,
+} from "@/types/productTypes";
 
 // Server-side function to get a product by name or ID
-export async function getProductByIdOrName(identifier: string): Promise<Product | null> {
+export async function getProductByIdOrName(
+  identifier: string,
+): Promise<Product | null> {
   if (!identifier) return null;
-  
+
   // Check if identifier looks like a UUID (has dashes and proper length)
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
-  
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      identifier,
+    );
+
   if (!isUuid) {
     // Skip direct API call for names and go straight to fallback
     try {
-      const allProductsResponse = await apiClient.get(`/website/${SHOP_ID}/products?limit=100`);
+      const allProductsResponse = await apiClient.get(
+        `/website/${SHOP_ID}/products?limit=100`,
+      );
       const data = allProductsResponse.data;
-      const normalizedIdentifier = identifier?.toString().toLowerCase() || '';
-      
-      return data.data?.find((product: Product) => 
-        product.id === identifier || 
-        (product.name && (
-          product.name.toLowerCase() === normalizedIdentifier ||
-          product.name.toLowerCase().replace(/\s+/g, '-') === normalizedIdentifier
-        ))
-      ) || null;
+      const normalizedIdentifier = identifier?.toString().toLowerCase() || "";
+
+      return (
+        data.data?.find(
+          (product: Product) =>
+            product.id === identifier ||
+            (product.name &&
+              (product.name.toLowerCase() === normalizedIdentifier ||
+                product.name.toLowerCase().replace(/\s+/g, "-") ===
+                  normalizedIdentifier)),
+        ) || null
+      );
     } catch (fallbackError) {
-      console.error('Error fetching product:', fallbackError);
+      console.error("Error fetching product:", fallbackError);
       return null;
     }
   }
-  
+
   try {
     // First try to fetch by ID (only for UUIDs)
-    const response = await apiClient.get(`/website/${SHOP_ID}/products/${identifier}`);
+    const response = await apiClient.get(
+      `/website/${SHOP_ID}/products/${identifier}`,
+    );
     return response.data;
-    
   } catch {
     // If not found by ID, try to fetch all and filter by name
     try {
-      const allProductsResponse = await apiClient.get(`/website/${SHOP_ID}/products?limit=100`);
+      const allProductsResponse = await apiClient.get(
+        `/website/${SHOP_ID}/products?limit=100`,
+      );
       const data = allProductsResponse.data;
-      const normalizedIdentifier = identifier?.toString().toLowerCase() || '';
-      
-      return data.data?.find((product: Product) => 
-        product.id === identifier || 
-        (product.name && (
-          product.name.toLowerCase() === normalizedIdentifier ||
-          product.name.toLowerCase().replace(/\s+/g, '-') === normalizedIdentifier
-        ))
-      ) || null;
+      const normalizedIdentifier = identifier?.toString().toLowerCase() || "";
+
+      return (
+        data.data?.find(
+          (product: Product) =>
+            product.id === identifier ||
+            (product.name &&
+              (product.name.toLowerCase() === normalizedIdentifier ||
+                product.name.toLowerCase().replace(/\s+/g, "-") ===
+                  normalizedIdentifier)),
+        ) || null
+      );
     } catch (fallbackError) {
-      console.error('Error fetching product:', fallbackError);
+      console.error("Error fetching product:", fallbackError);
       return null;
     }
   }
@@ -71,7 +91,7 @@ export const useGetProducts = (page = 1, limit = 10) => {
     queryKey: ["products", page, limit],
     queryFn: async () => {
       const response = await apiClient.get(`/website/${SHOP_ID}/products`, {
-        params: { page, limit }
+        params: { page, limit },
       });
       return response.data;
     },
@@ -85,7 +105,7 @@ export const useGetProducts = (page = 1, limit = 10) => {
  */
 export const useGetProductsWithFilters = (filters: ProductFilters = {}) => {
   const { category, brand, q, page = 1, limit = 10 } = filters;
-  
+
   return useQuery<ProductResponse>({
     queryKey: ["products", filters],
     queryFn: async () => {
@@ -93,12 +113,14 @@ export const useGetProductsWithFilters = (filters: ProductFilters = {}) => {
         page,
         limit,
       };
-      
+
       if (category) params.category = category;
       if (brand) params.brand = brand;
       if (q) params.q = q;
-      
-      const response = await apiClient.get(`/website/${SHOP_ID}/products`, { params });
+
+      const response = await apiClient.get(`/website/${SHOP_ID}/products`, {
+        params,
+      });
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -113,12 +135,12 @@ export const useGetProduct = (productId: string) => {
   return useQuery<Product>({
     queryKey: ["product", productId],
     queryFn: async () => {
-      const response = await apiClient.get(`/website/${SHOP_ID}/products/${productId}`);
+      const response = await apiClient.get(
+        `/website/${SHOP_ID}/products/${productId}`,
+      );
       return response.data;
     },
     enabled: !!productId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
-
-
