@@ -27,7 +27,7 @@ interface ProductDetailsClientProps {
     brand: {
       name: string;
     } | null;
-    shopProductCategory: {
+    shopproductcategory: {
       name: string;
     } | null;
     variants: {
@@ -286,7 +286,7 @@ const ProductDetailsClient = ({
               className="relative w-full lg:w-[400px] h-[600px] sm:h-[500px] rounded-2xl overflow-hidden order-1 lg:order-2"
               style={{ backgroundColor: "var(--bg-secondary)" }}
             >
-              {currentProduct.shopProductCategory && (
+              {currentProduct.shopproductcategory && (
                 <div className="absolute top-4 left-4 z-10">
                   <span className="bg-primary text-black px-3 py-1 rounded-full font-bold text-xs uppercase">
                     {currentProduct.shopproductcategory?.name}
