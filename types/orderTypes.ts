@@ -35,6 +35,8 @@ export interface CreateOrderRequest {
 export interface Order {
   id: string;
   orderNumber: number;
+  tokenNumber?: string;
+  token?: string;
   orderType: "dine_in" | "takeaway" | "delivery";
   status: "pending" | "completed" | "cancelled" | "preparing" | "ready";
   customerName: string;
@@ -48,7 +50,7 @@ export interface Order {
     shopProductId: string;
     quantity: number;
     message?: string;
-    product: {
+    shopProduct: {
       id: string;
       name: string;
       imageUrl?: string;
@@ -162,11 +164,11 @@ export interface CheckoutFormData {
 export interface CartItem {
   productId: string;
   quantity: number;
-  duration: 'hour' | 'day';
+  duration: "hour" | "day";
   message?: string;
 }
 
 export interface ConvertCartToOrderRequest {
   cartItems: CartItem[];
-  orderDetails: Omit<CheckoutFormData, 'productRequests' | 'serviceRequests'>;
+  orderDetails: Omit<CheckoutFormData, "productRequests" | "serviceRequests">;
 }

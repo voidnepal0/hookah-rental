@@ -53,7 +53,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         success("Successfully logged in!");
         onClose();
       } else {
-        await register(formData as Register);
+        await register({
+          ...formData,
+          role: "CUSTOMER",
+        } as Register);
         success("Account created successfully!");
         onClose();
       }
