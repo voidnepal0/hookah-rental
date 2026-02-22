@@ -51,8 +51,12 @@ const ProductDetailsClient = ({
   const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [selectedDuration] = useState<"day">("day");
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [selectedAddons, setSelectedAddons] = useState<
+    {
+      addonId: string;
+      quantity: number;
+    }[]
+  >([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Use the initial product from server-side props
@@ -104,20 +108,31 @@ const ProductDetailsClient = ({
 
     const cartItem = {
       productId: currentProduct.id, // Use the UUID instead of name
-      duration: selectedDuration,
+      quantity: quantity,
       addons: selectedAddons,
     };
 
     addToCart(cartItem);
   };
 
-  // Toggle addon selection
-  const toggleAddon = (addonId: string) => {
-    setSelectedAddons((prev) =>
-      prev.includes(addonId)
-        ? prev.filter((id) => id !== addonId)
-        : [...prev, addonId],
-    );
+  // Update addon quantity
+  const updateAddonQuantity = (addonId: string, newQuantity: number) => {
+    setSelectedAddons((prev) => {
+      const existing = prev.find((a) => a.addonId === addonId);
+      if (existing) {
+        if (newQuantity <= 0) {
+          return prev.filter((a) => a.addonId !== addonId);
+        }
+        return prev.map((a) =>
+          a.addonId === addonId ? { ...a, quantity: newQuantity } : a,
+        );
+      } else {
+        if (newQuantity > 0) {
+          return [...prev, { addonId, quantity: newQuantity }];
+        }
+        return prev;
+      }
+    });
   };
 
   // Create array of images (main image + secondary images)
@@ -163,17 +178,14 @@ const ProductDetailsClient = ({
   const { daily } = getPrice();
 
   // Calculate addons total
-  const addonsTotal = selectedAddons.reduce(
-    (total: number, addonId: string) => {
-      const addon = currentProduct?.addons?.find(
-        (a: ProductAddon) => a.id === addonId,
-      );
-      return total + (Number(addon?.additionalPrice) || 0);
-    },
-    0,
-  );
+  const addonsTotal = selectedAddons.reduce((total: number, addonObject) => {
+    const addon = currentProduct?.addons?.find(
+      (a: ProductAddon) => a.id === addonObject.addonId,
+    );
+    return total + (Number(addon?.additionalPrice) || 0) * addonObject.quantity;
+  }, 0);
 
-  const totalPrice = (daily + addonsTotal) * quantity;
+  const totalPrice = daily * quantity + addonsTotal;
 
   const productDisplayName = currentProduct?.name || "Unknown Product";
 
@@ -343,32 +355,47 @@ const ProductDetailsClient = ({
               <div className="space-y-3">
                 <h3 className="font-medium text-lg">Available Addons</h3>
                 <div className="space-y-2">
-                  {currentProduct.addons.map((addon: ProductAddon) => (
-                    <div
-                      key={addon.id}
-                      onClick={() => toggleAddon(addon.id)}
-                      className="flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
-                      style={{ borderColor: "var(--border-primary)" }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                            selectedAddons.includes(addon.id)
-                              ? "bg-primary border-primary"
-                              : "border-gray-300"
-                          }`}
-                        >
-                          {selectedAddons.includes(addon.id) && (
-                            <span className="text-black text-xs">✓</span>
-                          )}
+                  {currentProduct.addons.map((addon: ProductAddon) => {
+                    const currentQty =
+                      selectedAddons.find((a) => a.addonId === addon.id)
+                        ?.quantity || 0;
+                    return (
+                      <div
+                        key={addon.id}
+                        className="flex items-center p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                        style={{ borderColor: "var(--border-primary)" }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="font-medium">{addon.name}</span>
                         </div>
-                        <span className="font-medium">{addon.name}</span>
+                        <div className="ml-auto flex items-center border-2 border-primary max-w-[120px] py-1 rounded-full justify-around gap-3">
+                          <button
+                            onClick={() =>
+                              updateAddonQuantity(addon.id, currentQty - 1)
+                            }
+                            disabled={currentQty === 0}
+                            className={`w-7 h-7 min-w-7 min-h-7 aspect-square mx-1 cursor-pointer rounded-full bg-primary text-black flex items-center justify-center font-bold hover:bg-yellow-400 transition-colors ${currentQty === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+                          >
+                            -
+                          </button>
+                          <span className="w-12 text-center font-medium">
+                            {currentQty}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateAddonQuantity(addon.id, currentQty + 1)
+                            }
+                            className="w-7 h-7 min-w-7 min-h-7 aspect-square mx-1 cursor-pointer rounded-full bg-primary text-black flex items-center justify-center font-bold hover:bg-yellow-400 transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="text-primary font-bold ml-8">
+                          Rs {addon.additionalPrice * currentQty}
+                        </span>
                       </div>
-                      <span className="text-primary font-bold">
-                        Rs {addon.additionalPrice}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
