@@ -10,10 +10,7 @@ import AuthModal from "@/components/auth/AuthModal";
 import { Trash2 } from "lucide-react";
 import { HookahIcon } from "@/components/icons/HookahIcon";
 import toast from "react-hot-toast";
-import {
-  getProductById,
-  getProductByIdOrName,
-} from "@/services/api/productApi";
+import { getProductById } from "@/services/api/productApi";
 import { ArrowRightIcon } from "@/components/icons/ArrowRightIcon";
 import { ProductAddon } from "@/services";
 
@@ -186,14 +183,7 @@ const CartClient = () => {
                     const product = productDetails[item.productId];
                     if (!product) return null;
 
-                    const price =
-                      item.duration === "day"
-                        ? product.variants?.[0]?.sellingPrice ||
-                          product.sellingPrice ||
-                          0
-                        : product.variants?.[0]?.sellingPrice ||
-                          product.sellingPrice ||
-                          0;
+                    const price = product.sellingPrice || 0;
 
                     return (
                       <div
@@ -235,10 +225,7 @@ const CartClient = () => {
                           </div>
                         </div>
                         <div className="col-span-3 text-right flex items-center justify-between">
-                          <span className="font-medium">
-                            Rs {price}
-                            {item.duration === "day" ? "/day" : ""}
-                          </span>
+                          <span className="font-medium">Rs {price}</span>
                           <button
                             onClick={() => removeFromCart(item.productId)}
                             className="ml-4 text-red-500 cursor-pointer hover:text-red-700 transition-colors"

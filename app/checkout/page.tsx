@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createOrder } from "@/services/api/orderApi";
-import { getProductByIdOrName } from "@/services/api/productApi";
+import { getProductById } from "@/services/api/productApi";
 import { getDeliveryAddresses } from "@/services/api/addressApi";
 import {
   CreateOrderRequest,
@@ -83,7 +83,7 @@ const CheckoutPage = () => {
 
       for (const item of cartItems) {
         try {
-          const product = await getProductByIdOrName(item.productId);
+          const product = await getProductById(item.productId);
           if (product) {
             details[item.productId] = product;
 
@@ -106,7 +106,6 @@ const CheckoutPage = () => {
       const productRequests = cartItems.map((item) => ({
         shopProductId: item.productId,
         quantity: item.quantity,
-        message: `Rental duration: ${item.duration}`,
       }));
 
       // Default service requests with 0 price and time
@@ -578,9 +577,7 @@ const CheckoutPage = () => {
                       <span>
                         {product.name} x {item.quantity}
                       </span>
-                      <span>
-                        Rs {price}/per {item.duration}
-                      </span>
+                      <span>Rs {price}</span>
                     </div>
                   );
                 })}
