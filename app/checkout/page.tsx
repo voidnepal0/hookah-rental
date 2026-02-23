@@ -19,7 +19,7 @@ import { Payment } from "@/types/paymentTypes";
 import { useAuth } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
 import Image from "next/image";
-import { getPaymentMethod } from "@/services";
+import { getPaymentMethod, Product, ProductAddon } from "@/services";
 
 // Define product details interface
 interface ProductDetails {
@@ -31,6 +31,12 @@ interface ProductDetails {
   description?: string;
   brand?: { name: string };
   shopProductCategory?: { name: string };
+  addons?: Array<{
+    id: string;
+    name: string;
+    additionalPrice: number;
+    // ... other addon fields if needed
+  }>;
 }
 
 const CheckoutPage = () => {
@@ -61,70 +67,80 @@ const CheckoutPage = () => {
     customerLandmark: "",
     notes: "",
     productRequests: [],
-    serviceRequests: [
+    purchaseMethod: "",
+    agreeToTerms: false,
+  });
+
+  const fetchProductDetails = async () => {
+    if (cartItems.length === 0) return;
+    const details: Record<string, ProductDetails> = {};
+    let total = 0;
+
+    for (const item of cartItems) {
+      try {
+        const product = await getProductById(item.productId);
+        if (product) {
+          details[item.productId] = product;
+
+          const basePrice: number = product.sellingPrice;
+
+          const selectedAddons =
+            item.addons.filter((addonObject: any) =>
+              product.addons.find(
+                (addon: ProductAddon) => addonObject.addonId === addon.id,
+              ),
+            ) || ([] as any[]);
+          // Calculate addons total
+          const addonsTotal = selectedAddons?.reduce(
+            (total: number, addonObject: any) => {
+              const addon = product?.addons?.find(
+                (a: ProductAddon) => a.id === addonObject.addonId,
+              );
+              return (
+                total +
+                (Number(addon?.additionalPrice) || 0) *
+                  (addonObject.quantity || 0)
+              );
+            },
+            0,
+          );
+          total += basePrice * item.quantity + addonsTotal;
+        }
+      } catch (error: unknown) {
+        console.error(`Error fetching product ${item.productId}:`, error);
+      }
+    }
+
+    console.log("DETAILS:::", JSON.stringify(details, null, 2));
+    setProductDetails(details);
+    setTotalAmount(total);
+
+    // Update form with product requests
+    const productRequests = cartItems.map((item) => ({
+      shopProductId: item.productId,
+      quantity: item.quantity,
+      addons: item.addons,
+    }));
+
+    // Default service requests with 0 price and time
+    const serviceRequests = [
       {
         shopServiceId: "",
         quantity: 0,
         price: 0,
         notes: "",
       },
-    ],
-    purchaseMethod: "",
-    agreeToTerms: false,
-  });
+    ];
+
+    setFormData((prev) => ({
+      ...prev,
+      productRequests,
+      serviceRequests,
+    }));
+  };
 
   // Fetch product details and calculate total
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      if (cartItems.length === 0) return;
-
-      const details: Record<string, ProductDetails> = {};
-      let total = 0;
-
-      for (const item of cartItems) {
-        try {
-          const product = await getProductById(item.productId);
-          if (product) {
-            details[item.productId] = product;
-
-            const basePrice: number = (product.variants?.[0]?.sellingPrice ??
-              product.sellingPrice ??
-              0) as number;
-            const price: number = basePrice;
-
-            total += price * item.quantity;
-          }
-        } catch (error: unknown) {
-          console.error(`Error fetching product ${item.productId}:`, error);
-        }
-      }
-
-      setProductDetails(details);
-      setTotalAmount(total);
-
-      // Update form with product requests
-      const productRequests = cartItems.map((item) => ({
-        shopProductId: item.productId,
-        quantity: item.quantity,
-      }));
-
-      // Default service requests with 0 price and time
-      const serviceRequests = [
-        {
-          shopServiceId: "",
-          quantity: 0,
-          price: 0,
-          notes: "",
-        },
-      ];
-
-      setFormData((prev) => ({
-        ...prev,
-        productRequests,
-        serviceRequests,
-      }));
-    };
-
     fetchProductDetails();
   }, [cartItems]);
 
@@ -176,7 +192,6 @@ const CheckoutPage = () => {
   const validateForm = () => {
     const errors: string[] = [];
 
-    // Name validation
     if (!formData.customerName.trim()) {
       errors.push("Full name is required");
     } else if (formData.customerName.trim().length < 2) {
@@ -185,7 +200,6 @@ const CheckoutPage = () => {
       errors.push("Full name can only contain letters and spaces");
     }
 
-    // Email validation
     if (!formData.customerEmail?.trim()) {
       errors.push("Email is required");
     } else if (
@@ -194,7 +208,6 @@ const CheckoutPage = () => {
       errors.push("Please enter a valid email address");
     }
 
-    // Phone validation
     if (!formData.customerPhone.trim()) {
       errors.push("Phone number is required");
     } else if (!/^[0-9+\-\s()]+$/.test(formData.customerPhone.trim())) {
@@ -205,23 +218,22 @@ const CheckoutPage = () => {
       errors.push("Phone number must be at least 10 digits");
     }
 
-    // Address validation (simple - accepts any format)
     if (!formData.customerAddress.trim()) {
       errors.push("Address is required");
     }
 
-    // Payment method validation
     if (!formData.purchaseMethod.trim()) {
       errors.push("Please select a payment method");
     }
 
     if (errors.length > 0) {
-      toast.error(errors[0]); // Show first error
+      toast.error(errors[0]);
       return false;
     }
 
     return true;
   };
+
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -234,7 +246,6 @@ const CheckoutPage = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -243,7 +254,6 @@ const CheckoutPage = () => {
       return;
     }
 
-    // Validate form
     if (!validateForm()) {
       return;
     }
@@ -251,7 +261,6 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Create payment distribution based on selected payment method
       const paymentDistributions: PaymentDistribution[] = [];
 
       if (formData.purchaseMethod) {
@@ -262,7 +271,6 @@ const CheckoutPage = () => {
         });
       }
 
-      // Create order request
       const orderRequest: CreateOrderRequest = {
         orderType: formData.orderType,
         customerName: formData.customerName,
@@ -300,22 +308,22 @@ const CheckoutPage = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className={` bg-(--bg-secondary) text-(--text-secondary)`}>
+      <div className={`bg-(--bg-secondary) text-(--text-secondary)`}>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-16">
             <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
             <p className="mb-8">
-              Add some hookahs to your cart before checking out
+              Add some items to your cart before checking out
             </p>
             <Link
-              href="/rentals"
+              href="/products" // or /shop or wherever your products are
               className={`inline-flex items-center px-6 py-3 rounded-lg font-semibold transition-colors ${
                 isDark
                   ? "bg-white text-black hover:bg-gray-200"
                   : "bg-black text-white hover:bg-gray-800"
               }`}
             >
-              Browse Hookahs
+              Browse Products
             </Link>
           </div>
         </div>
@@ -328,7 +336,7 @@ const CheckoutPage = () => {
       {/* Background Container */}
       <div className="absolute inset-0 flex flex-col lg:flex-row">
         <div className="lg:w-1/2 w-full h-1/2 lg:h-full bg-(--bg-secondary)"></div>
-        <div className="lg:w-1/2 relative w-full overflow-hidden  h-175 lg:h-full bg-(--bg-primary)">
+        <div className="lg:w-1/2 relative w-full overflow-hidden h-175 lg:h-full bg-(--bg-primary)">
           <div className="absolute hidden lg:block top-0 lg:right-0 pointer-events-none">
             <Image
               src={
@@ -363,7 +371,7 @@ const CheckoutPage = () => {
       <div className="relative font-poppins max-w-[1440px] mx-auto px-4 lg:px-8">
         {/* Header */}
         <div className="pt-20">
-          <div className="flex items-center justify-between  mb-8">
+          <div className="flex items-center justify-between mb-8">
             <Link
               href="/cart"
               className={`flex items-center mt-10 gap-2 ${isDark ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-black"}`}
@@ -371,8 +379,6 @@ const CheckoutPage = () => {
               <ArrowLeft size={20} />
               <span>Back to Cart</span>
             </Link>
-
-            {/* Spacer for centering */}
           </div>
         </div>
 
@@ -553,31 +559,64 @@ const CheckoutPage = () => {
             </form>
           </div>
 
-          {/* Right Half - Order Details Section */}
+          {/* ─────────────────────────────────────────────── */}
+          {/* Right Half - Order Details Section (UPDATED)     */}
+          {/* ─────────────────────────────────────────────── */}
           <div className="lg:w-1/2">
             <div className="lg:pl-5 h-full font-poppins bg-(--bg-primary) text-(--text-primary) flex flex-col py-8">
               <h2 className="text-xl font-semibold mb-6">Order Details</h2>
 
-              {/* Cart Items */}
-              <div className="space-y-4 mb-6">
+              {/* Cart Items + Addons */}
+              <div className="space-y-6 mb-8">
                 {cartItems.map((item) => {
                   const product = productDetails[item.productId];
                   if (!product) return null;
 
-                  const price =
+                  const basePrice =
                     product.variants?.[0]?.sellingPrice ||
                     product.sellingPrice ||
                     0;
 
+                  const productSubtotal = basePrice * item.quantity;
+
                   return (
-                    <div
-                      key={item.productId}
-                      className="flex justify-between items-center"
-                    >
-                      <span>
-                        {product.name} x {item.quantity}
-                      </span>
-                      <span>Rs {price}</span>
+                    <div key={item.productId} className="space-y-3">
+                      {/* Main product */}
+                      <div className="flex justify-between items-center font-medium">
+                        <span>
+                          {product.name} × {item.quantity}
+                        </span>
+                        <span>Rs {productSubtotal}</span>
+                      </div>
+
+                      {/* Addons */}
+                      {item.addons?.length > 0 && (
+                        <div className="space-y-2 pl-6 text-sm">
+                          {item.addons.map((addon) => {
+                            const addonDetail = product.addons?.find(
+                              (a) => a.id === addon.addonId,
+                            );
+                            if (!addonDetail) return null;
+
+                            const addonTotal =
+                              addonDetail.additionalPrice * addon.quantity;
+
+                            return (
+                              <div
+                                key={addon.addonId}
+                                className={`flex justify-between items-center ${
+                                  isDark ? "text-gray-400" : "text-gray-600"
+                                }`}
+                              >
+                                <span>
+                                  + {addonDetail.name} × {addon.quantity}
+                                </span>
+                                <span>Rs {addonTotal}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -604,7 +643,6 @@ const CheckoutPage = () => {
                 <h3 className="font-semibold mb-4">Purchase Method</h3>
                 <div className="grid grid-cols-1 gap-4">
                   {paymentMethods?.map((method) => {
-                    // Map payment method names to display info
                     const getMethodInfo = (name: string) => {
                       switch (name.toLowerCase()) {
                         case "esewa":
@@ -647,6 +685,8 @@ const CheckoutPage = () => {
                         key={method.id}
                         className={`flex items-center border-(--border-color) p-4 rounded-lg border-2 cursor-pointer transition-colors ${
                           formData.purchaseMethod === method.id
+                            ? "border-primary bg-opacity-10"
+                            : ""
                         }`}
                       >
                         <div className="relative flex items-center justify-center w-7 h-7">
@@ -719,8 +759,9 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-      <div className="relative lg:pt-80 pt-50  lg:pb-0">
-        <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+
+      <div className="relative lg:pt-80 pt-50 lg:pb-0">
+        <div className="absolute bottom-0 right-0 pointer-events-none z-0">
           <Image
             src={
               theme === "dark"
@@ -733,7 +774,7 @@ const CheckoutPage = () => {
             className="w-auto h-auto"
           />
         </div>
-        <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
+        <div className="absolute lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
           <Image
             src={
               theme === "dark" ? "/layout/cloudBlack.svg" : "/layout/cloud.svg"

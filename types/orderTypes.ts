@@ -4,6 +4,10 @@ export interface ProductRequest {
   shopProductId: string;
   quantity: number;
   message?: string;
+  addons?: {
+    addonId: string;
+    quantity: number;
+  }[];
 }
 
 export interface ServiceRequest {
@@ -50,12 +54,24 @@ export interface Order {
     shopProductId: string;
     quantity: number;
     message?: string;
+    soldAtPrice?: number;
     shopProduct: {
       id: string;
       name: string;
       imageUrl?: string;
       sellingPrice: number;
     };
+    addons: {
+      id: string;
+      productRequestId: string;
+      quantity: number;
+      addonId: string;
+      addon: {
+        id: string;
+        name: string;
+        additionalPrice: number;
+      };
+    }[];
   }>;
   serviceRequests?: Array<{
     id: string;

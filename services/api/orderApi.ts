@@ -36,7 +36,7 @@ export const createOrder = async (
  */
 export const getAllOrders = async (
   params: FetchOrdersParams = {},
-): Promise<ApiResponse<GetOrdersResponse>> => {
+): Promise<any> => {
   const queryParams = new URLSearchParams();
 
   // Add query parameters
@@ -45,10 +45,11 @@ export const getAllOrders = async (
       queryParams.append(key, String(value));
     }
   });
+  queryParams.append("shopId", SHOP_ID);
 
-  const url = queryParams.toString()
-    ? `/orders/all?${queryParams.toString()}`
-    : "/orders/all";
+  const url = queryParams.toString()?.trim()
+    ? `/website/my-orders?${queryParams.toString()}`
+    : "/website/my-orders";
   const response = await apiClient.get(url);
   return response.data;
 };

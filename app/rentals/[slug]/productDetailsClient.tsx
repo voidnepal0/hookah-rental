@@ -31,6 +31,9 @@ interface ProductDetailsClientProps {
       name: string;
     } | null;
     variants: {
+      id: string;
+      name: string;
+      description?: string;
       sellingPrice: number;
     }[];
     addons: {
@@ -58,9 +61,14 @@ const ProductDetailsClient = ({
     }[]
   >([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    null,
+  );
 
   // Use the initial product from server-side props
   const [currentProduct, setCurrentProduct] = useState(initialProduct);
+
+  console.log("CURRENT PRODUCT::", JSON.stringify(currentProduct, null, 2));
 
   // Fallback client-side fetch if initialProduct is not available
   useEffect(() => {
@@ -82,6 +90,16 @@ const ProductDetailsClient = ({
       fetchProduct();
     }
   }, [currentProduct]);
+
+  useEffect(() => {
+    if (
+      currentProduct &&
+      currentProduct?.variants?.length > 0 &&
+      !selectedVariantId
+    ) {
+      setSelectedVariantId(currentProduct?.variants[0].id);
+    }
+  }, [currentProduct, selectedVariantId]);
 
   // Fetch all products to find the matching one by name
   const { data: allProducts, isLoading: isProductsLoading } = useGetProducts(
@@ -107,7 +125,7 @@ const ProductDetailsClient = ({
     if (!currentProduct) return;
 
     const cartItem = {
-      productId: currentProduct.id, // Use the UUID instead of name
+      productId: selectedVariantId || currentProduct.id, // Use the UUID instead of name
       quantity: quantity,
       addons: selectedAddons,
     };
@@ -163,15 +181,12 @@ const ProductDetailsClient = ({
   const getPrice = () => {
     if (!currentProduct) return { daily: 0 };
 
-    if (currentProduct.variants && currentProduct.variants.length > 0) {
-      const variant = currentProduct.variants[0];
-      return {
-        daily: variant.sellingPrice || 0,
-      };
-    }
+    const selectedVariant = currentProduct.variants?.find(
+      (v: any) => v.id === selectedVariantId,
+    );
 
     return {
-      daily: currentProduct.sellingPrice || 0,
+      daily: selectedVariant?.sellingPrice || currentProduct.sellingPrice || 0,
     };
   };
 
@@ -349,6 +364,23 @@ const ProductDetailsClient = ({
                 </div>
               )} */}
             </div>
+            {currentProduct.variants && currentProduct.variants.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-medium text-lg">Select Variant</h3>
+                <select
+                  value={selectedVariantId || ""}
+                  onChange={(e) => setSelectedVariantId(e.target.value)}
+                  className="w-full p-3 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                  style={{ borderColor: "var(--border-primary)" }}
+                >
+                  {currentProduct.variants.map((variant: any) => (
+                    <option key={variant.id} value={variant.id}>
+                      {variant.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Addons Section */}
             {currentProduct.addons && currentProduct.addons.length > 0 && (

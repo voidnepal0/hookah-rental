@@ -6,3 +6,5 @@ export const getPaymentMethod: () => Promise<Payment[]> = async () => {
   const response = await apiClient.get(`/website/${SHOP_ID}/paymentModes`);
   return response?.data?.items || [];
 };
+
+export const useGetPaymentMethod = () => {};

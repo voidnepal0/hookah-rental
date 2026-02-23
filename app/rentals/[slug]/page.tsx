@@ -11,6 +11,8 @@ export default async function ProductPage({
   const resolvedParams = await Promise.resolve(params);
   const product = await getProductById(resolvedParams.slug);
 
+  console.log("PRODUCT::::", product);
+
   if (!product) {
     notFound();
   }

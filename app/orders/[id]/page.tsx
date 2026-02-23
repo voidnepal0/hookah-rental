@@ -73,6 +73,8 @@ const OrderDetailsPage = () => {
     fetchOrderDetails();
   }, [orderId]);
 
+  console.log("ORDER:::", JSON.stringify(order, null, 2));
+
   // Handle order actions
   const handleSettleOrder = async (paymentData?: SettleOrderRequest) => {
     if (!orderId) return;
@@ -208,6 +210,20 @@ const OrderDetailsPage = () => {
 
   const statusInfo = getStatusInfo(order.status);
   const OrderTypeIcon = getOrderTypeIcon(order.orderType);
+
+  const calculatedTotal = order.productRequests.reduce((acc, item) => {
+    const basePrice = item.soldAtPrice || item.shopProduct?.sellingPrice || 0;
+    const productTotal = basePrice * (item.quantity || 0);
+
+    const addonsTotal = (item.addons || []).reduce((addonAcc, addonItem) => {
+      return (
+        addonAcc +
+        (addonItem.quantity || 0) * (addonItem.addon.additionalPrice || 0)
+      );
+    }, 0);
+
+    return acc + productTotal + addonsTotal;
+  }, 0);
 
   return (
     <div
@@ -419,15 +435,56 @@ const OrderDetailsPage = () => {
                           Note: {item.message}
                         </p>
                       )}
+
+                      {/* Addons display */}
+                      {item.addons && item.addons.length > 0 && (
+                        <div className="mt-2">
+                          <p
+                            className={`text-xs font-medium ${isDark ? "text-gray-300" : "text-gray-700"} mb-1`}
+                          >
+                            Addons:
+                          </p>
+                          <div className="space-y-1 pl-4">
+                            {item.addons.map((addonItem) => (
+                              <div
+                                key={addonItem.id}
+                                className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}
+                              >
+                                • {addonItem.addon.name} ×{addonItem.quantity}{" "}
+                                (+Rs. {addonItem.addon.additionalPrice} each)
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* End of addons display */}
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">
-                        Rs. {item?.shopProduct?.sellingPrice * item.quantity}
+                        Rs.{" "}
+                        {(() => {
+                          const base =
+                            (item.soldAtPrice ||
+                              item.shopProduct?.sellingPrice ||
+                              0) * (item.quantity || 0);
+                          const addonsSum = (item.addons || []).reduce(
+                            (sum, a) =>
+                              sum +
+                              (a.quantity || 0) *
+                                (a.addon.additionalPrice || 0),
+                            0,
+                          );
+                          return base + addonsSum;
+                        })()}
                       </div>
                       <div
                         className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}
                       >
-                        Rs. {item?.shopProduct?.sellingPrice} each
+                        Rs.{" "}
+                        {item.soldAtPrice ||
+                          item.shopProduct?.sellingPrice ||
+                          "?"}{" "}
+                        each + addons
                       </div>
                     </div>
                   </div>
@@ -491,7 +548,7 @@ const OrderDetailsPage = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>Rs. {order.totalAmount}</span>
+                  <span>Rs. {calculatedTotal}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Service Charge:</span>
@@ -501,7 +558,7 @@ const OrderDetailsPage = () => {
                   className={`flex justify-between text-xl font-bold pt-3 border-t ${isDark ? "border-gray-700" : "border-gray-300"}`}
                 >
                   <span>Total:</span>
-                  <span>Rs. {order.totalAmount}</span>
+                  <span>Rs. {calculatedTotal}</span>
                 </div>
               </div>
 
@@ -523,6 +580,14 @@ const OrderDetailsPage = () => {
                 <p className={isDark ? "text-gray-400" : "text-gray-600"}>
                   Placed on: {new Date(order.createdAt).toLocaleString()}
                 </p>
+                {/* Optional: show difference if backend total doesn't match */}
+                {/* {Math.abs(calculatedTotal - (order.totalAmount || 0)) >
+                  0.01 && (
+                  <p className="text-red-500 mt-1 text-xs">
+                    Note: Calculated total (Rs. {calculatedTotal}) differs from
+                    stored total (Rs. {order.totalAmount})
+                  </p>
+                )} */}
               </div>
             </div>
           </div>

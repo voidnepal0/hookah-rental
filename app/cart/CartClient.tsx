@@ -40,7 +40,7 @@ const CartClient = () => {
 
   // Fetch product details for cart items
   useEffect(() => {
-    console.log("CART:::", cartItems);
+    console.log("CART:::", JSON.stringify(cartItems, null, 2));
 
     const fetchProductDetails = async () => {
       if (cartItems.length === 0) return;
@@ -61,39 +61,48 @@ const CartClient = () => {
       );
 
       setProductDetails(details);
+      console.log("PRODUCT DETAILS:::", JSON.stringify(details, null, 2));
     };
 
     fetchProductDetails();
   }, [cartItems]);
 
-  const subtotal = Object.entries(productDetails).reduce(
-    (total, [productId, product]) => {
+  // Calculate totals
+  const { productsSubtotal, addonsSubtotal } = Object.entries(
+    productDetails,
+  ).reduce(
+    (acc, [productId, product]) => {
       const cartItem = cartItems.find((item) => item.productId === productId);
-      if (!cartItem) return total;
+      if (!cartItem) return acc;
 
-      const selectedAddons = cartItem.addons;
-      const addonsTotal = selectedAddons.reduce(
-        (total: number, addonObject) => {
-          const addon = product?.addons.find(
-            (a: ProductAddon) => a.id === addonObject.addonId,
+      const productTotal = (product.sellingPrice || 0) * cartItem.quantity;
+
+      const addonsTotalForItem = cartItem.addons.reduce(
+        (sum, selectedAddon) => {
+          const addon = product.addons.find(
+            (a) => a.id === selectedAddon.addonId,
           );
+          if (!addon) return sum;
           return (
-            total + (Number(addon?.additionalPrice) || 0) * addonObject.quantity
+            sum + (Number(addon.additionalPrice) || 0) * selectedAddon.quantity
           );
         },
         0,
       );
 
-      const price = product.sellingPrice || 0;
+      acc.productsSubtotal += productTotal;
+      acc.addonsSubtotal += addonsTotalForItem;
 
-      return total + (price * cartItem.quantity + addonsTotal);
+      return acc;
     },
-    0,
+    { productsSubtotal: 0, addonsSubtotal: 0 },
   );
 
-  const itemCount = getCartCount();
+  const subtotal = productsSubtotal + addonsSubtotal;
   const discount = voucherApplied ? voucherAmount : 0;
   const total = subtotal - discount;
+
+  const itemCount = getCartCount();
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity >= 0) {
@@ -183,18 +192,60 @@ const CartClient = () => {
                     const product = productDetails[item.productId];
                     if (!product) return null;
 
-                    const price = product.sellingPrice || 0;
+                    const basePrice = product.sellingPrice || 0;
+                    const productTotal = basePrice * item.quantity;
+
+                    const addonsTotal = item.addons.reduce(
+                      (sum, selectedAddon) => {
+                        const addon = product.addons.find(
+                          (a) => a.id === selectedAddon.addonId,
+                        );
+                        return (
+                          sum +
+                          (addon
+                            ? Number(addon.additionalPrice) *
+                              selectedAddon.quantity
+                            : 0)
+                        );
+                      },
+                      0,
+                    );
+
+                    const lineTotal = productTotal + addonsTotal;
 
                     return (
                       <div
                         key={item.productId}
-                        className={`grid grid-cols-12 gap-4 py-4 border-b ${theme === "dark" ? "border-black" : "border-gray-200"} items-center`}
+                        className={`grid grid-cols-12 gap-4 py-4 border-b ${theme === "dark" ? "border-black" : "border-gray-200"} items-start`}
                       >
                         <div className="col-span-6">
                           <h3 className="font-medium">{product.name}</h3>
+
+                          {item.addons.length > 0 && (
+                            <div className="mt-1 text-sm opacity-80 space-y-0.5">
+                              {item.addons.map((addonObj) => {
+                                const addon = product.addons.find(
+                                  (a) => a.id === addonObj.addonId,
+                                );
+                                if (!addon) return null;
+                                const addonPrice =
+                                  Number(addon.additionalPrice) || 0;
+                                const addonLineTotal =
+                                  addonPrice * addonObj.quantity;
+
+                                return (
+                                  <div key={addonObj.addonId} className="pl-1">
+                                    • {addon.name} × {addonObj.quantity} = Rs{" "}
+                                    {addonLineTotal}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
+
                         <div className="col-span-3">
-                          <div className="flex items-center  justify-center">
+                          <div className="flex items-center justify-center">
                             <div className="flex items-center p-1 border-2 border-primary rounded-[27px] justify-around gap-1 w-24 sm:w-32">
                               <button
                                 onClick={() =>
@@ -224,8 +275,9 @@ const CartClient = () => {
                             </div>
                           </div>
                         </div>
+
                         <div className="col-span-3 text-right flex items-center justify-between">
-                          <span className="font-medium">Rs {price}</span>
+                          <span className="font-medium">Rs {lineTotal}</span>
                           <button
                             onClick={() => removeFromCart(item.productId)}
                             className="ml-4 text-red-500 cursor-pointer hover:text-red-700 transition-colors"
@@ -274,8 +326,13 @@ const CartClient = () => {
 
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between">
-                      <span>Sub Total ({itemCount} items)</span>
-                      <span className="font-medium">Rs {subtotal}</span>
+                      <span>Products ({itemCount} items)</span>
+                      <span className="font-medium">Rs {productsSubtotal}</span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span>Add-ons</span>
+                      <span className="font-medium">Rs {addonsSubtotal}</span>
                     </div>
 
                     <div className="flex gap-2">
@@ -308,7 +365,7 @@ const CartClient = () => {
                     {voucherApplied && (
                       <div className="flex justify-between text-green-600">
                         <span>Voucher Applied</span>
-                        <span className="font-medium">Rs {discount}</span>
+                        <span className="font-medium">- Rs {discount}</span>
                       </div>
                     )}
 
@@ -337,7 +394,7 @@ const CartClient = () => {
           </div>
         </div>
         <div className="relative pt-60">
-          <div className="absolute  bottom-0  right-0 pointer-events-none z-0">
+          <div className="absolute bottom-0 right-0 pointer-events-none z-0">
             <Image
               src={hookahImage}
               alt="Hookah"
@@ -346,7 +403,7 @@ const CartClient = () => {
               className="w-auto h-auto"
             />
           </div>
-          <div className="absolute  lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
+          <div className="absolute lg:-bottom-10 -bottom-6 left-0 pointer-events-none z-0">
             <Image
               src={cloudImage}
               alt="Cloud"
